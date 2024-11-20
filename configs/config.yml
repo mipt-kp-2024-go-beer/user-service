@@ -1,0 +1,6 @@
+# config.yml
+
+host: 127.0.0.1
+publicport: 8080
+privateport: 8081
+database: userstable

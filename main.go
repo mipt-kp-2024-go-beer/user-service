@@ -1,25 +1,28 @@
 package main
 
-var (
-// en         env.Provider      = env.NewEnv()
-// db         database.Provider = database.NewPG()
-// mainRouter http.Router = http.NewMuxRouter()
+import (
+	"context"
+	"log"
 )
 
 func main() {
-	initPublic()
-	//router := mux.NewRouter()
+	ctx := context.Background()
 
-	//userRepo := repository.NewUserRepository()
-	//userService := services.NewUserService(userRepo)
+	config, err := app.NewConfig("config.yaml")
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	// Open APIs
-	//router.HandleFunc("/api/user/login", handlers.UserLogin(userService)).Methods("POST")
-	//router.HandleFunc("/api/user/create", middlewares.AuthMiddleware, handlers.UserCreate(userService)).Methods("POST")
-	//router.HandleFunc("/api/user/delete/{id}", middlewares.AuthMiddleware, handlers.UserDelete(userService)).Methods("DELETE")
+	app, err := app.New(ctx, config)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	// Public user info endpoint
-	//router.HandleFunc("/api/user/info/{id}", middlewares.AuthMiddleware, handlers.UserInfo(userService)).Methods("GET")
+	if err = app.Setup(ctx, config.DB.DSN); err != nil {
+		log.Fatal(err)
+	}
 
-	//log.Fatal(http.ListenAndServe(":8080", router))
+	if err = app.Start(); err != nil {
+		log.Fatal(err)
+	}
 }

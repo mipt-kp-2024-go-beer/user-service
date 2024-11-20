@@ -133,7 +133,7 @@ func editUserHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // Main function to start the server
-func initPublic() {
+func InitPublic() {
 	http.HandleFunc("/user/login", loginHandler)
 	http.HandleFunc("/user/create", createUserHandler)
 	http.HandleFunc("/user/delete", deleteUserHandler)
