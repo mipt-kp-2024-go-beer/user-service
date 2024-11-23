@@ -1,15 +1,51 @@
-package http
+package users
 
 import (
+	"context"
 	"crypto/rand"
 	"encoding/hex"
 	"encoding/json"
 	"net/http"
 	"sync"
+
+	"github.com/mipt-kp-2024-go-beer/user-service/internal/server"
 )
 
+type Handler struct {
+	service Service
+	public  *http.ServeMux
+	private *http.ServeMux
+}
+
+func NewHandler(service Service, public *http.ServeMux, private *http.ServeMux) *Handler {
+	return &Handler{
+		service: service,
+		public:  public,
+		private: private,
+	}
+}
+
+func (h *Handler) Register() {
+	server.InitPublic(h.public)
+	//h.public.Group(func(r chi.Router) {
+	//	r.Get("/api/v1/products", h.getProducts)
+	//	r.Post("/api/v1/products", h.postProducts)
+	//})
+}
+
+func (h *Handler) getProducts(w http.ResponseWriter, r *http.Request) {
+	// validate r
+	//data, err := h.service.Products(r.Context())
+	//if err != nil {
+	//	http.Error(w, err.Error(), http.StatusInternalServerError)
+	//	return
+	//}
+
+	//fmt.Fprintf(w, "", data)
+}
+
 // User structure to hold user data
-type User struct {
+type HandleUser struct {
 	ID          string `json:"id"`
 	Login       string `json:"login"`
 	Password    string `json:"password"`
@@ -19,14 +55,12 @@ type User struct {
 // In-memory storage for demonstration purposes
 var (
 	usersMutex sync.Mutex
-	users      = make(map[string]User) // user mock
+	users      = make(map[string]HandleUser) // user mock
 	nextID     = 1
 )
 
 const TokenLen int = 64
-const Port = ":8080"
 
-// generating random session token
 func GenerateSecureToken(length int) string {
 	b := make([]byte, length)
 	if _, err := rand.Read(b); err != nil {
@@ -36,32 +70,46 @@ func GenerateSecureToken(length int) string {
 }
 
 // Login handler for user login
-func loginHandler(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) loginHandler(w http.ResponseWriter, r *http.Request) {
 	var creds struct {
 		Login    string `json:"login"`
 		Password string `json:"password"`
 	}
+	println("we got here 1")
 
 	if err := json.NewDecoder(r.Body).Decode(&creds); err != nil {
 		http.Error(w, "Invalid request", http.StatusBadRequest)
 		return
 	}
 
+	println("we got here")
+
 	// Check credentials (mock implementation)
-	for _, user := range users {
-		if user.Login == creds.Login && user.Password == creds.Password {
-			token := GenerateSecureToken(TokenLen)
-			json.NewEncoder(w).Encode(map[string]string{"token": token})
-			return
-		}
+	ctx := context.Background()
+	checked, err := h.service.CheckUser(ctx, User{"", creds.Login, creds.Password, 0})
+	if err != nil || !checked {
+		http.Error(w, "There is no user with such credentials", http.StatusBadRequest)
+		return
 	}
+
+	token, err := h.service.GetUniqueToken(ctx)
+
+	if err != nil {
+		http.Error(w, "Error in generating unique token", http.StatusNotAcceptable)
+		return
+	}
+
+	w.WriteHeader(http.StatusFound)
+
+	json.NewEncoder(w).Encode(token)
+	return
 
 	http.Error(w, "Unauthorized", http.StatusUnauthorized)
 }
 
 // Create user handler
 func createUserHandler(w http.ResponseWriter, r *http.Request) {
-	var newUser User
+	var newUser HandleUser
 	if err := json.NewDecoder(r.Body).Decode(&newUser); err != nil {
 		http.Error(w, "Invalid request", http.StatusBadRequest)
 		return
@@ -111,7 +159,7 @@ func getUserInfoHandler(w http.ResponseWriter, r *http.Request) {
 // Edit user handler
 func editUserHandler(w http.ResponseWriter, r *http.Request) {
 	id := r.URL.Query().Get("id")
-	var updatedUser User
+	var updatedUser HandleUser
 	if err := json.NewDecoder(r.Body).Decode(&updatedUser); err != nil {
 		http.Error(w, "Invalid request", http.StatusBadRequest)
 		return
@@ -133,12 +181,14 @@ func editUserHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // Main function to start the server
-func InitPublic() {
-	http.HandleFunc("/user/login", loginHandler)
-	http.HandleFunc("/user/create", createUserHandler)
-	http.HandleFunc("/user/delete", deleteUserHandler)
-	http.HandleFunc("/user/info", getUserInfoHandler)
-	http.HandleFunc("/user/edit", editUserHandler)
+func (h *Handler) InitPublic(m *http.ServeMux) {
+	m.HandleFunc("/user/login", h.loginHandler)
+	m.HandleFunc("/user/create", createUserHandler)
+	m.HandleFunc("/user/delete", deleteUserHandler)
+	m.HandleFunc("/user/info", getUserInfoHandler)
+	m.HandleFunc("/user/edit", editUserHandler)
+}
 
-	http.ListenAndServe(Port, nil) // Start the server on port 8080
+func (h *Handler) postProducts(w http.ResponseWriter, r *http.Request) {
+
 }

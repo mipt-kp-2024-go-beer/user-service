@@ -2,44 +2,50 @@ package app
 
 import (
 	"context"
-	"fmt"
 	"log"
+	"net"
 	"net/http"
 	"os"
 	"os/signal"
 
-	"github.com/jmoiron/sqlx"
+	users "github.com/mipt-kp-2024-go-beer/user-service/internal"
+	"github.com/mipt-kp-2024-go-beer/user-service/internal/storage/memory"
 	"golang.org/x/sync/errgroup"
 )
 
 type App struct {
 	config  *Config
-	public  *http.ServeMux
-	private *http.ServeMux
+	open    *http.ServeMux
+	secret  *http.ServeMux
+	public  *http.Server
+	private *http.Server
 }
 
 func New(ctx context.Context, config *Config) (*App, error) {
-	pub := http.NewServeMux()
-	priv := http.NewServeMux()
+	open := http.NewServeMux()
+	secret := http.NewServeMux()
 	return &App{
 		config:  config,
-		public:  pub,
-		private: priv,
+		open:    open,
+		secret:  secret,
+		public:  &http.Server{Addr: net.JoinHostPort(config.Host, config.PublicPort), Handler: open},
+		private: &http.Server{Addr: net.JoinHostPort(config.Host, config.PrivatePort), Handler: secret},
 	}, nil
 }
 
 func (a *App) Setup(ctx context.Context, dsn string) error {
-	db, err := sqlx.ConnectContext(ctx, "pgx", dsn)
-	if err != nil {
-		return err
-	}
+	//db, err := sqlx.ConnectContext(ctx, "pgx", dsn)
+	//if err != nil {
+	//	return err
+	//}
 
 	//store := fridgeStore.NewStorage(db)
 	// store := sqlite.NewStorage(db)
+	store := memory.NewStorage()
 
-	//service := fridge.NewAppService(store)
-	//handler := fridge.NewHandler(a.router, service)
-	//handler.Register()
+	service := users.NewAppService(store)
+	handler := users.NewHandler(service, a.open, a.secret)
+	handler.Register()
 
 	// shelfService := shelf.NewAppService(store)
 
@@ -52,17 +58,30 @@ func (a *App) Start() error {
 
 	errs, ctx := errgroup.WithContext(ctx)
 
-	log.Println("starting web server on port %s", a.config.PublicPort)
-
 	errs.Go(func() error {
-		http.ListenAndServe(a.public)
-		if err := a.http.ListenAndServe(); err != nil {
-			return fmt.Errorf("listen and serve error: %w", err)
-		}
+		log.Println("starting web server on port", a.config.PublicPort)
+
+		go func() {
+			if err := a.public.ListenAndServe(); err != nil {
+				panic("ListenAndServe: " + err.Error())
+			}
+		}()
+
+		log.Println("starting web server on port", a.config.PrivatePort)
+
+		go func() {
+			if err := a.private.ListenAndServe(); err != nil {
+				panic("ListenAndServe: " + err.Error())
+			}
+		}()
+
 		return nil
 	})
 
-	//<-ctx.Done()
+	<-ctx.Done()
+
+	a.public.Shutdown(ctx)
+	a.private.Shutdown(ctx)
 
 	// Restore default behavior on the interrupt signal and notify user of shutdown.
 	//stop()
