@@ -24,8 +24,6 @@ var (
 	nextID     = 1
 )
 
-const TokenLen int = 64
-
 func GenerateSecureToken(length int) string {
 	b := make([]byte, length)
 	if _, err := rand.Read(b); err != nil {
@@ -49,7 +47,7 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 	// Check credentials (mock implementation)
 	for _, user := range users {
 		if user.Login == creds.Login && user.Password == creds.Password {
-			token := GenerateSecureToken(TokenLen)
+			token := GenerateSecureToken(64)
 			json.NewEncoder(w).Encode(map[string]string{"token": token})
 			return
 		}

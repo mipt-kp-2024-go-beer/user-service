@@ -2,13 +2,9 @@ package users
 
 import (
 	"context"
-	"crypto/rand"
-	"encoding/hex"
 	"encoding/json"
 	"net/http"
 	"sync"
-
-	"github.com/mipt-kp-2024-go-beer/user-service/internal/server"
 )
 
 type Handler struct {
@@ -26,7 +22,7 @@ func NewHandler(service Service, public *http.ServeMux, private *http.ServeMux) 
 }
 
 func (h *Handler) Register() {
-	server.InitPublic(h.public)
+	h.InitPublic(h.public)
 	//h.public.Group(func(r chi.Router) {
 	//	r.Get("/api/v1/products", h.getProducts)
 	//	r.Post("/api/v1/products", h.postProducts)
@@ -59,30 +55,17 @@ var (
 	nextID     = 1
 )
 
-const TokenLen int = 64
-
-func GenerateSecureToken(length int) string {
-	b := make([]byte, length)
-	if _, err := rand.Read(b); err != nil {
-		return ""
-	}
-	return hex.EncodeToString(b)
-}
-
 // Login handler for user login
 func (h *Handler) loginHandler(w http.ResponseWriter, r *http.Request) {
 	var creds struct {
 		Login    string `json:"login"`
 		Password string `json:"password"`
 	}
-	println("we got here 1")
 
 	if err := json.NewDecoder(r.Body).Decode(&creds); err != nil {
 		http.Error(w, "Invalid request", http.StatusBadRequest)
 		return
 	}
-
-	println("we got here")
 
 	// Check credentials (mock implementation)
 	ctx := context.Background()
@@ -100,30 +83,32 @@ func (h *Handler) loginHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusFound)
-
 	json.NewEncoder(w).Encode(token)
-	return
-
-	http.Error(w, "Unauthorized", http.StatusUnauthorized)
 }
 
 // Create user handler
-func createUserHandler(w http.ResponseWriter, r *http.Request) {
-	var newUser HandleUser
-	if err := json.NewDecoder(r.Body).Decode(&newUser); err != nil {
+func (h *Handler) createUserHandler(w http.ResponseWriter, r *http.Request) {
+	var creds struct {
+		Login    string `json:"login"`
+		Password string `json:"password"`
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&creds); err != nil {
 		http.Error(w, "Invalid request", http.StatusBadRequest)
 		return
 	}
 
-	usersMutex.Lock()
-	defer usersMutex.Unlock()
+	ctx := context.Background()
+	id, err := h.service.NewUser(ctx, User{"", creds.Login, creds.Password, 0})
 
-	newUser.ID = string(nextID)
-	nextID++
+	if err != nil {
+		w.WriteHeader(http.StatusConflict)
+		http.Error(w, "User exists", http.StatusBadRequest)
+		return
+	}
 
-	users[newUser.ID] = newUser
 	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(map[string]string{"id": newUser.ID})
+	json.NewEncoder(w).Encode(map[string]string{"id": id})
 }
 
 // Delete user handler
@@ -183,7 +168,8 @@ func editUserHandler(w http.ResponseWriter, r *http.Request) {
 // Main function to start the server
 func (h *Handler) InitPublic(m *http.ServeMux) {
 	m.HandleFunc("/user/login", h.loginHandler)
-	m.HandleFunc("/user/create", createUserHandler)
+	m.HandleFunc("/user/create", h.createUserHandler)
+	// not impemented yet
 	m.HandleFunc("/user/delete", deleteUserHandler)
 	m.HandleFunc("/user/info", getUserInfoHandler)
 	m.HandleFunc("/user/edit", editUserHandler)
