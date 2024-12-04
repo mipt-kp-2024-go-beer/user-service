@@ -3,6 +3,7 @@ package users
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"sync"
 )
@@ -23,6 +24,7 @@ func NewHandler(service Service, public *http.ServeMux, private *http.ServeMux) 
 
 func (h *Handler) Register() {
 	h.InitPublic(h.public)
+	h.InitPrivate(h.private)
 	//h.public.Group(func(r chi.Router) {
 	//	r.Get("/api/v1/products", h.getProducts)
 	//	r.Post("/api/v1/products", h.postProducts)
@@ -69,17 +71,9 @@ func (h *Handler) loginHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Check credentials (mock implementation)
 	ctx := context.Background()
-	checked, err := h.service.CheckUser(ctx, User{"", creds.Login, creds.Password, 0})
-	if err != nil || !checked {
-		http.Error(w, "There is no user with such credentials", http.StatusBadRequest)
-		return
-	}
-
-	token, err := h.service.GetUniqueToken(ctx)
-
+	token, err := h.service.CreateToken(ctx, creds.Login, creds.Password)
 	if err != nil {
-		http.Error(w, "Error in generating unique token", http.StatusNotAcceptable)
-		return
+		http.Error(w, "Error getting token", http.StatusBadRequest)
 	}
 
 	w.WriteHeader(http.StatusFound)
@@ -165,6 +159,31 @@ func editUserHandler(w http.ResponseWriter, r *http.Request) {
 	http.Error(w, "User not found", http.StatusNotFound)
 }
 
+func (h *Handler) getID(w http.ResponseWriter, r *http.Request) {
+	var token struct {
+		Access string `json:"token"`
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&token); err != nil {
+		http.Error(w, "Invalid request", http.StatusBadRequest)
+		return
+	}
+
+	ctx := context.Background()
+	ID, err := h.service.GetIDByToken(ctx, token.Access)
+
+	if err != nil {
+		fmt.Errorf("%w", err)
+	}
+
+	if err != nil {
+		http.Error(w, "Token incorrect", http.StatusBadRequest)
+	}
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]string{"id": ID})
+}
+
 // Main function to start the server
 func (h *Handler) InitPublic(m *http.ServeMux) {
 	m.HandleFunc("/user/login", h.loginHandler)
@@ -175,6 +194,8 @@ func (h *Handler) InitPublic(m *http.ServeMux) {
 	m.HandleFunc("/user/edit", editUserHandler)
 }
 
-func (h *Handler) postProducts(w http.ResponseWriter, r *http.Request) {
-
+func (h *Handler) InitPrivate(m *http.ServeMux) {
+	// not impemented yet
+	m.HandleFunc("/user/id", h.getID)
+	m.HandleFunc("/user/permissions", h.createUserHandler)
 }

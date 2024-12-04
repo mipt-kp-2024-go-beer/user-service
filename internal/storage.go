@@ -21,8 +21,13 @@ type Token struct {
 type Service interface {
 	//Users(ctx context.Context) ([]User, error)
 	GetUniqueToken(ctx context.Context) (Token, error)
-	CheckUser(ctx context.Context, user User) (bool, error)
+	CheckUser(ctx context.Context, user User) (bool, string, error)
+	IsExpired(ctx context.Context, access string) (bool, error)
+	DeleteToken(ctx context.Context, access string) error
 	NewUser(ctx context.Context, user User) (string, error)
+	GetIDByToken(ctx context.Context, access string) (string, error)
+	CreateToken(ctx context.Context, login string, password string) (Token, error)
+	Bind(ctx context.Context, token Token, ID string) error
 	//Tokens(ctx context.Context) ([]Token, error)
 	//Place(ctx context.Context, user User) (id string, err error)
 }
@@ -30,7 +35,13 @@ type Service interface {
 type Store interface {
 	LoadUsers(ctx context.Context) ([]User, error)
 	CheckUser(ctx context.Context, user User) (string, error)
-	SaveUser(ctx context.Context, user User) (id string, err error)
-	CheckToken(ctx context.Context, token Token) (bool, error)
+
+	SaveUser(ctx context.Context, user User) (string, error)
+	SaveToken(ctx context.Context, token Token, ID string) (err error)
+	TokenExpired(ctx context.Context, access string) (bool, error)
+	PopToken(ctx context.Context, access string) error
+	CheckToken(ctx context.Context, access string) (bool, error)
 	LoadTokens(ctx context.Context) ([]Token, error)
+
+	GetSessionID(ctx context.Context, access string) (string, error)
 }
