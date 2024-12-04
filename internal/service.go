@@ -50,7 +50,6 @@ func (s *AppService) NewUser(ctx context.Context, user User) (string, error) {
 func (s *AppService) CreateToken(ctx context.Context, login string, password string) (Token, error) {
 	// Check credentials
 	checked, ID, err := s.CheckUser(ctx, User{"", login, password, 0})
-	println("CreateToken", ID)
 	if err != nil || !checked {
 		return Token{}, oops.ErrNoUser
 	}
@@ -156,4 +155,8 @@ func (s *AppService) Place(ctx context.Context, product User) (id string, err er
 	}
 
 	return id, nil
+}
+
+func (s *AppService) UserInfo(ctx context.Context, ID string) (User, error) {
+	return s.store.User(ctx, ID)
 }

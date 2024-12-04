@@ -154,3 +154,13 @@ func (s *Storage) PopToken(ctx context.Context, access string) error {
 	delete(s.Users.Users, access)
 	return nil
 }
+
+func (s *Storage) User(ctx context.Context, ID string) (users.User, error) {
+	for i, v := range s.Users.Users {
+		if v.ID == ID {
+			return users.User{ID: v.ID, Login: i, Password: v.Password, Permissions: v.Permissions}, nil
+		}
+	}
+
+	return users.User{}, oops.ErrNoUser
+}

@@ -3,8 +3,8 @@ package users
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"net/http"
+	"strconv"
 	"sync"
 )
 
@@ -173,15 +173,38 @@ func (h *Handler) getID(w http.ResponseWriter, r *http.Request) {
 	ID, err := h.service.GetIDByToken(ctx, token.Access)
 
 	if err != nil {
-		fmt.Errorf("%w", err)
-	}
-
-	if err != nil {
 		http.Error(w, "Token incorrect", http.StatusBadRequest)
 	}
 
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(map[string]string{"id": ID})
+}
+
+func (h *Handler) getPermissions(w http.ResponseWriter, r *http.Request) {
+	var token struct {
+		Access string `json:"token"`
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&token); err != nil {
+		http.Error(w, "Invalid request", http.StatusBadRequest)
+		return
+	}
+
+	ctx := context.Background()
+	ID, err := h.service.GetIDByToken(ctx, token.Access)
+
+	if err != nil {
+		http.Error(w, "Token incorrect", http.StatusBadRequest)
+	}
+
+	Info, infoerr := h.service.UserInfo(ctx, ID)
+
+	if infoerr != nil {
+		http.Error(w, "User incorrect", http.StatusBadRequest)
+	}
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]string{"permissios": strconv.Itoa(int(Info.Permissions))})
 }
 
 // Main function to start the server
@@ -195,7 +218,6 @@ func (h *Handler) InitPublic(m *http.ServeMux) {
 }
 
 func (h *Handler) InitPrivate(m *http.ServeMux) {
-	// not impemented yet
 	m.HandleFunc("/user/id", h.getID)
-	m.HandleFunc("/user/permissions", h.createUserHandler)
+	m.HandleFunc("/user/permissions", h.getPermissions)
 }
