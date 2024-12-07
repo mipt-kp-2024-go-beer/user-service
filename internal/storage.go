@@ -32,6 +32,7 @@ type Service interface {
 	UserInfo(ctx context.Context, ID string) (User, error)
 	EditUser(ctx context.Context, token string, user User) (User, error)
 	GivePermission(ctx context.Context, token string, ID string, Permissions uint) error
+	RefreshToken(ctx context.Context, access string, refresh string) (Token, error)
 	//Tokens(ctx context.Context) ([]Token, error)
 	//Place(ctx context.Context, user User) (id string, err error)
 }
@@ -48,7 +49,7 @@ type Store interface {
 	SaveToken(ctx context.Context, token Token, ID string) (err error)
 	TokenExpired(ctx context.Context, access string) (bool, error)
 	PopToken(ctx context.Context, access string) error
-	CheckToken(ctx context.Context, access string) (bool, error)
+	CheckToken(ctx context.Context, access string) (Token, error)
 	LoadTokens(ctx context.Context) ([]Token, error)
 
 	GetSessionID(ctx context.Context, access string) (string, error)

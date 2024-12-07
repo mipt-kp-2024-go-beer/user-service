@@ -74,6 +74,7 @@ func (h *Handler) loginHandler(w http.ResponseWriter, r *http.Request) {
 	token, err := h.service.CreateToken(ctx, creds.Login, creds.Password)
 	if err != nil {
 		http.Error(w, "Error getting token", http.StatusBadRequest)
+		return
 	}
 
 	w.WriteHeader(http.StatusFound)
@@ -253,6 +254,29 @@ func (h *Handler) givePermissionHandler(w http.ResponseWriter, r *http.Request) 
 	w.WriteHeader(http.StatusOK)
 }
 
+// Login handler for user login
+func (h *Handler) RefreshHandler(w http.ResponseWriter, r *http.Request) {
+	var tokens struct {
+		Acess   string `json:"access"`
+		Refresh string `json:"refresh"`
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&tokens); err != nil {
+		http.Error(w, "Invalid request", http.StatusBadRequest)
+		return
+	}
+
+	// Check credentials (mock implementation)
+	ctx := context.Background()
+	token, err := h.service.RefreshToken(ctx, tokens.Acess, tokens.Refresh)
+	if err != nil {
+		http.Error(w, "Error getting token", http.StatusBadRequest)
+	}
+
+	w.WriteHeader(http.StatusFound)
+	json.NewEncoder(w).Encode(token)
+}
+
 // Main function to start the server
 func (h *Handler) InitPublic(m *http.ServeMux) {
 	m.HandleFunc("/user/login", h.loginHandler)
@@ -260,6 +284,7 @@ func (h *Handler) InitPublic(m *http.ServeMux) {
 	m.HandleFunc("/user/delete", h.deleteUserHandler)
 	m.HandleFunc("/user/edit", h.editUserHandler)
 	m.HandleFunc("/user/give", h.givePermissionHandler)
+	m.HandleFunc("/user/refresh", h.RefreshHandler)
 }
 
 func (h *Handler) InitPrivate(m *http.ServeMux) {

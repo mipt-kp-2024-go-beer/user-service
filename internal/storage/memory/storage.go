@@ -74,16 +74,18 @@ func (s *Storage) CheckUser(ctx context.Context, user users.User) (id string, er
 	return val.ID, nil
 }
 
-func (s *Storage) CheckToken(ctx context.Context, access string) (bool, error) {
+func (s *Storage) CheckToken(ctx context.Context, access string) (users.Token, error) {
 	s.Tokens.mux.RLock()
 	defer s.Tokens.mux.RUnlock()
-	_, ok := s.Tokens.Tokens[access]
+	val, ok := s.Tokens.Tokens[access]
 
-	if !ok {
-		return false, nil
+	if ok {
+		return users.Token{Access: access, Refresh: val.refresh, Expiration: val.expiration}, oops.ErrDupAccess
 	}
 
-	return true, nil
+	delete(s.Tokens.Tokens, access)
+
+	return users.Token{}, nil
 }
 
 func (s *Storage) SaveUser(ctx context.Context, user users.User) (id string, err error) {

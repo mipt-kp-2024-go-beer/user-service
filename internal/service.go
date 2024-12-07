@@ -102,13 +102,13 @@ func (s *AppService) GetUniqueToken(ctx context.Context) (Token, error) {
 	access := make([]byte, TokenLen)
 	got := false
 
-	// generate acc
+	// generate access
 	for i := 0; i < GenerateRetries; i++ {
 		_, err := rand.Read(access)
 		token.Access = string(access)
 		if err == nil || err == oops.ErrDupAccess {
-			flag, _ := s.store.CheckToken(ctx, token.Access)
-			if !flag {
+			_, err := s.store.CheckToken(ctx, token.Access)
+			if err == nil {
 				got = true
 				break
 			}
@@ -122,12 +122,13 @@ func (s *AppService) GetUniqueToken(ctx context.Context) (Token, error) {
 	refresh := make([]byte, TokenLen)
 	got = false
 
+	// generate refresh
 	for i := 0; i < GenerateRetries; i++ {
 		_, err := rand.Read(refresh)
 		token.Refresh = string(refresh)
 		if err == nil {
-			flag, _ := s.store.CheckToken(ctx, token.Refresh)
-			if !flag {
+			_, err := s.store.CheckToken(ctx, token.Refresh)
+			if err == nil {
 				got = true
 				break
 			}
@@ -152,18 +153,17 @@ func (s *AppService) Products(ctx context.Context) ([]User, error) {
 
 func (s *AppService) GetIDByToken(ctx context.Context, access string) (string, error) {
 
-	flag, err := s.store.CheckToken(ctx, access)
+	_, err := s.store.CheckToken(ctx, access)
 
-	if !flag || err != nil {
+	if err == nil {
 		return "", oops.ErrTokenExistance
 	}
 
-	flag, err = s.IsExpired(ctx, access)
+	flag, err := s.IsExpired(ctx, access)
 	if err != nil {
 		return "", oops.ErrTokenExpired
 	}
 	if flag {
-		s.DeleteToken(ctx, access)
 		return "", oops.ErrTokenExpired
 	}
 
@@ -218,6 +218,7 @@ func (s *AppService) GivePermission(ctx context.Context, token string, ID string
 	if err != nil {
 		return oops.ErrTokenExistance
 	}
+	println("user got")
 
 	info, errinfo := s.UserInfo(ctx, adminID)
 	if errinfo != nil {
@@ -229,4 +230,33 @@ func (s *AppService) GivePermission(ctx context.Context, token string, ID string
 	}
 
 	return s.store.SetPermission(ctx, ID, Permissions)
+}
+
+func (s *AppService) RefreshToken(ctx context.Context, access string, refresh string) (Token, error) {
+	token, err := s.store.CheckToken(ctx, access)
+	if err == nil {
+		return Token{}, err
+	}
+
+	if token.Refresh != refresh {
+		return Token{}, oops.ErrNoRefresh
+	}
+
+	ID, UserError := s.GetIDByToken(ctx, access)
+
+	if UserError != nil {
+		return Token{}, oops.ErrNoUser
+	}
+
+	s.store.PopToken(ctx, access)
+
+	newToken, newErr := s.GetUniqueToken(ctx)
+
+	if newErr != nil {
+		return Token{}, oops.ErrNoTokens
+	}
+
+	s.store.SaveToken(ctx, newToken, ID)
+
+	return newToken, nil
 }
