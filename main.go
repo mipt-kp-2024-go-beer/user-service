@@ -20,7 +20,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	if err = app.Setup(ctx, config.DB.DSN); err != nil {
+	if err = app.Setup(ctx, config.DB); err != nil {
 		log.Fatal(err)
 	}
 

@@ -164,3 +164,43 @@ func (s *Storage) User(ctx context.Context, ID string) (users.User, error) {
 
 	return users.User{}, oops.ErrNoUser
 }
+
+func (s *Storage) PopUser(ctx context.Context, ID string) error {
+	s.Users.mux.Lock()
+	defer s.Users.mux.Unlock()
+	for i, v := range s.Users.Users {
+		if v.ID == ID {
+			delete(s.Users.Users, i)
+			return nil
+		}
+	}
+
+	return oops.ErrNoUser
+}
+
+// changes user user other user fields
+func (s *Storage) ChangeUser(ctx context.Context, user users.User) (users.User, error) {
+	s.Users.mux.Lock()
+	defer s.Users.mux.Unlock()
+	for i, v := range s.Users.Users {
+		if v.ID == user.ID {
+			Permissions := v.Permissions
+			delete(s.Users.Users, i)
+			s.Users.Users[user.Login] = UserValues{ID: user.ID, Password: user.Password, Permissions: Permissions}
+			return user, nil
+		}
+	}
+
+	return users.User{}, oops.ErrNoUser
+}
+
+func (s *Storage) SetPermission(ctx context.Context, ID string, Permissions uint) error {
+	for i, v := range s.Users.Users {
+		if v.ID == ID {
+			s.Users.Users[i] = UserValues{ID: v.ID, Password: v.Password, Permissions: Permissions}
+			return nil
+		}
+	}
+
+	return oops.ErrNoUser
+}

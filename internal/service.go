@@ -14,6 +14,36 @@ const TokenLen int = 64
 const GenerateRetries int = 5
 const ExpirationDuartion int = 10
 
+// Permission is the flag enum for the permissions a user might have
+type Permission uint
+
+const (
+	// PermManageBooks allows the user to add, edit and delete books from the library
+	PermManageBooks uint = 1 << 0
+	// PermQueryTotalStock allows the user to get the total stored book count
+	PermQueryTotalStock uint = 1 << 1
+	// PermChangeTotalStock allows the user to register updates to the total stored book count.
+	// Requires PermGetTotalStock as a prerequisite.
+	PermChangeTotalStock uint = 1 << 2
+	// PermQueryUsers allows the user to get information about other users, including their permissions.
+	// Not required to get information about oneself, other rules apply.
+	PermQueryUsers uint = 1 << 3
+	// PermManageUsers allows the user to add, edit and delete other users.
+	// Not required to manage oneself, other rules apply.
+	// Requires PermQueryUsers as a prerequisite.
+	PermManageUsers uint = 1 << 4
+	// PermGrantPermissions allows the user to grant permissions to other users.
+	// Only a subset of own permissions may be granted.
+	// Requires PermQueryUsers as a prerequisite.
+	PermGrantPermissions uint = 1 << 5
+	// PermLoanBooks allows the user to register book takeouts and returns.
+	PermLoanBooks uint = 1 << 6
+	// PermQueryAvailableStock allows the user to get the number of available (not lent out) copies of a book.
+	PermQueryAvailableStock uint = 1 << 7
+	// PermQueryReservations allows the user to get information related to book reservations.
+	PermQueryReservations uint = 1 << 8
+)
+
 type AppService struct {
 	store Store
 }
@@ -159,4 +189,44 @@ func (s *AppService) Place(ctx context.Context, product User) (id string, err er
 
 func (s *AppService) UserInfo(ctx context.Context, ID string) (User, error) {
 	return s.store.User(ctx, ID)
+}
+
+func (s *AppService) DeleteUser(ctx context.Context, ID string) error {
+	return s.store.PopUser(ctx, ID)
+}
+
+func (s *AppService) EditUser(ctx context.Context, token string, user User) (User, error) {
+	ID, err := s.GetIDByToken(ctx, token)
+	if err != nil {
+		return User{}, oops.ErrTokenExistance
+	}
+
+	info, errinfo := s.UserInfo(ctx, ID)
+	if errinfo != nil {
+		return User{}, oops.ErrNoUser
+	}
+
+	if (info.Permissions & PermManageUsers) == 0 {
+		return User{}, oops.ErrWrongPermissions
+	}
+
+	return s.store.ChangeUser(ctx, user)
+}
+
+func (s *AppService) GivePermission(ctx context.Context, token string, ID string, Permissions uint) error {
+	adminID, err := s.GetIDByToken(ctx, token)
+	if err != nil {
+		return oops.ErrTokenExistance
+	}
+
+	info, errinfo := s.UserInfo(ctx, adminID)
+	if errinfo != nil {
+		return oops.ErrNoUser
+	}
+
+	if (info.Permissions & PermManageUsers) == 0 {
+		return oops.ErrWrongPermissions
+	}
+
+	return s.store.SetPermission(ctx, ID, Permissions)
 }

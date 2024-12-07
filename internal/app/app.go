@@ -2,6 +2,7 @@ package app
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net"
 	"net/http"
@@ -47,6 +48,11 @@ func (a *App) Setup(ctx context.Context, dsn string) error {
 	handler := users.NewHandler(service, a.open, a.secret)
 	handler.Register()
 
+	ID, err := service.NewUser(ctx, users.User{Login: a.config.Login, Password: a.config.Password, Permissions: 0x1111111})
+	println(ID)
+	if err != nil {
+		fmt.Errorf("%w", err)
+	}
 	// shelfService := shelf.NewAppService(store)
 
 	return nil

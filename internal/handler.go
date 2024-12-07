@@ -106,33 +106,30 @@ func (h *Handler) createUserHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // Delete user handler
-func deleteUserHandler(w http.ResponseWriter, r *http.Request) {
-	id := r.URL.Query().Get("id")
-	usersMutex.Lock()
-	defer usersMutex.Unlock()
+func (h *Handler) deleteUserHandler(w http.ResponseWriter, r *http.Request) {
+	var token struct {
+		Access string `json:"token"`
+	}
 
-	// Check for existence and delete
-	if _, exists := users[id]; exists {
-		delete(users, id)
-		w.WriteHeader(http.StatusNoContent)
+	if err := json.NewDecoder(r.Body).Decode(&token); err != nil {
+		http.Error(w, "Invalid request", http.StatusBadRequest)
 		return
 	}
 
-	http.Error(w, "User not found", http.StatusNotFound)
-}
+	ctx := context.Background()
+	ID, err := h.service.GetIDByToken(ctx, token.Access)
 
-// Get user info handler
-func getUserInfoHandler(w http.ResponseWriter, r *http.Request) {
-	id := r.URL.Query().Get("id")
-	usersMutex.Lock()
-	defer usersMutex.Unlock()
-
-	if user, exists := users[id]; exists {
-		json.NewEncoder(w).Encode(user)
-		return
+	if err != nil {
+		http.Error(w, "Token incorrect", http.StatusBadRequest)
 	}
 
-	http.Error(w, "User not found", http.StatusNotFound)
+	err = h.service.DeleteUser(ctx, ID)
+
+	if err != nil {
+		http.Error(w, "There is no user", http.StatusBadRequest)
+	}
+
+	w.WriteHeader(http.StatusOK)
 }
 
 // Edit user handler
@@ -174,6 +171,7 @@ func (h *Handler) getID(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		http.Error(w, "Token incorrect", http.StatusBadRequest)
+		return
 	}
 
 	w.WriteHeader(http.StatusOK)
@@ -195,26 +193,73 @@ func (h *Handler) getPermissions(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		http.Error(w, "Token incorrect", http.StatusBadRequest)
+		return
 	}
 
 	Info, infoerr := h.service.UserInfo(ctx, ID)
 
 	if infoerr != nil {
 		http.Error(w, "User incorrect", http.StatusBadRequest)
+		return
 	}
 
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(map[string]string{"permissios": strconv.Itoa(int(Info.Permissions))})
 }
 
+func (h *Handler) editUserHandler(w http.ResponseWriter, r *http.Request) {
+	var editor struct {
+		Access   string `json:"token"`
+		ID       string `json:"id"`
+		Login    string `json:"newLogin"`
+		Password string `json:"newPassword"`
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&editor); err != nil {
+		http.Error(w, "Invalid request", http.StatusBadRequest)
+		return
+	}
+
+	ctx := context.Background()
+	_, err := h.service.EditUser(ctx, editor.Access, User{Login: editor.Login, Password: editor.Password, ID: editor.ID, Permissions: 0})
+	if err != nil {
+		http.Error(w, "Error editing tiken", http.StatusBadRequest)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+}
+
+func (h *Handler) givePermissionHandler(w http.ResponseWriter, r *http.Request) {
+	var editor struct {
+		Access     string `json:"token"`
+		ID         string `json:"id"`
+		Permission uint   `json:"permission"`
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&editor); err != nil {
+		http.Error(w, "Invalid request", http.StatusBadRequest)
+		return
+	}
+
+	ctx := context.Background()
+	err := h.service.GivePermission(ctx, editor.Access, editor.ID, editor.Permission)
+
+	if err != nil {
+		http.Error(w, "Cannot give permissions", http.StatusBadRequest)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+}
+
 // Main function to start the server
 func (h *Handler) InitPublic(m *http.ServeMux) {
 	m.HandleFunc("/user/login", h.loginHandler)
 	m.HandleFunc("/user/create", h.createUserHandler)
-	// not impemented yet
-	m.HandleFunc("/user/delete", deleteUserHandler)
-	m.HandleFunc("/user/info", getUserInfoHandler)
-	m.HandleFunc("/user/edit", editUserHandler)
+	m.HandleFunc("/user/delete", h.deleteUserHandler)
+	m.HandleFunc("/user/edit", h.editUserHandler)
+	m.HandleFunc("/user/give", h.givePermissionHandler)
 }
 
 func (h *Handler) InitPrivate(m *http.ServeMux) {
