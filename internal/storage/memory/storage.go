@@ -105,7 +105,7 @@ func (s *Storage) CheckToken(ctx context.Context, access string) (users.Token, e
 
 // Save user if it is not in the d
 // @param ctx context.Context for managing the scope of the operation.
-// @param access users.User user to be added
+// @param user users.User user to be added
 func (s *Storage) SaveUser(ctx context.Context, user users.User) (id string, err error) {
 	s.Users.mux.Lock()
 	defer s.Users.mux.Unlock()
@@ -122,7 +122,6 @@ func (s *Storage) SaveUser(ctx context.Context, user users.User) (id string, err
 
 // Save user if it is not in the d
 // @param ctx context.Context for managing the scope of the operation.
-// @param access users.User user to be added
 func (s *Storage) LoadTokens(ctx context.Context) ([]users.Token, error) {
 	s.Tokens.mux.RLock()
 	defer s.Tokens.mux.RUnlock()
@@ -141,7 +140,7 @@ func (s *Storage) LoadTokens(ctx context.Context) ([]users.Token, error) {
 
 // Save user if it is not in the d
 // @param ctx context.Context for managing the scope of the operation.
-// @param access users.User user to be added
+// @param access string access token
 func (s *Storage) GetSessionID(ctx context.Context, access string) (string, error) {
 	s.Tokens.mux.RLock()
 	defer s.Tokens.mux.RUnlock()
@@ -157,12 +156,20 @@ func (s *Storage) GetSessionID(ctx context.Context, access string) (string, erro
 	return val.user, nil
 }
 
+// Save token if it is not in the storage
+// @param ctx context.Context for managing the scope of the operation.
+// @param token users.Token token to be saved
+// @param ID string related user ID
 func (s *Storage) SaveToken(ctx context.Context, token users.Token, ID string) (err error) {
 
 	s.Tokens.Tokens[token.Access] = Token{refresh: token.Refresh, expiration: token.Expiration, user: ID}
 	return nil
 }
 
+// check if token is expired
+// @param ctx context.Context for managing the scope of the operation.
+// @param token users.Token token to be saved
+// @param ID string related user ID
 func (s *Storage) TokenExpired(ctx context.Context, access string) (bool, error) {
 	val, ok := s.Tokens.Tokens[access]
 	if !ok {
@@ -176,11 +183,17 @@ func (s *Storage) TokenExpired(ctx context.Context, access string) (bool, error)
 	return false, nil
 }
 
+// delete token
+// @param ctx context.Context for managing the scope of the operation.
+// @param acess string token to be deleted
 func (s *Storage) PopToken(ctx context.Context, access string) error {
 	delete(s.Users.Users, access)
 	return nil
 }
 
+// get User from storage
+// @param ctx context.Context for managing the scope of the operation.
+// @param ID string user ID
 func (s *Storage) User(ctx context.Context, ID string) (users.User, error) {
 	for i, v := range s.Users.Users {
 		if v.ID == ID {
@@ -191,6 +204,9 @@ func (s *Storage) User(ctx context.Context, ID string) (users.User, error) {
 	return users.User{}, oops.ErrNoUser
 }
 
+// delete User from storage
+// @param ctx context.Context for managing the scope of the operation.
+// @param ID string user ID
 func (s *Storage) PopUser(ctx context.Context, ID string) error {
 	s.Users.mux.Lock()
 	defer s.Users.mux.Unlock()
@@ -204,7 +220,9 @@ func (s *Storage) PopUser(ctx context.Context, ID string) error {
 	return oops.ErrNoUser
 }
 
-// changes user user other user fields
+// delete User from storage
+// @param ctx context.Context for managing the scope of the operation.
+// @param user users.User user to be changed
 func (s *Storage) ChangeUser(ctx context.Context, user users.User) (users.User, error) {
 	s.Users.mux.Lock()
 	defer s.Users.mux.Unlock()
@@ -220,6 +238,10 @@ func (s *Storage) ChangeUser(ctx context.Context, user users.User) (users.User, 
 	return users.User{}, oops.ErrNoUser
 }
 
+// delete User from storage
+// @param ctx context.Context for managing the scope of the operation.
+// @param ID string user ID
+// @param Permission uint user Permission
 func (s *Storage) SetPermission(ctx context.Context, ID string, Permissions uint) error {
 	for i, v := range s.Users.Users {
 		if v.ID == ID {
