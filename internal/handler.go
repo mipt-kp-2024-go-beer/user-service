@@ -5,15 +5,16 @@ import (
 	"encoding/json"
 	"net/http"
 	"strconv"
-	"sync"
 )
 
+// Handler is responsible for handling HTTP requests and routing them to the appropriate service.
 type Handler struct {
-	service Service
-	public  *http.ServeMux
-	private *http.ServeMux
+	service Service        // Service interface to perform business logic
+	public  *http.ServeMux // ServeMux for public routes
+	private *http.ServeMux // ServeMux for private routes
 }
 
+// Handler constructor
 func NewHandler(service Service, public *http.ServeMux, private *http.ServeMux) *Handler {
 	return &Handler{
 		service: service,
@@ -22,43 +23,17 @@ func NewHandler(service Service, public *http.ServeMux, private *http.ServeMux) 
 	}
 }
 
+// Register sets up the public and private routes for the handler.
 func (h *Handler) Register() {
 	h.InitPublic(h.public)
 	h.InitPrivate(h.private)
-	//h.public.Group(func(r chi.Router) {
-	//	r.Get("/api/v1/products", h.getProducts)
-	//	r.Post("/api/v1/products", h.postProducts)
-	//})
 }
 
-func (h *Handler) getProducts(w http.ResponseWriter, r *http.Request) {
-	// validate r
-	//data, err := h.service.Products(r.Context())
-	//if err != nil {
-	//	http.Error(w, err.Error(), http.StatusInternalServerError)
-	//	return
-	//}
-
-	//fmt.Fprintf(w, "", data)
-}
-
-// User structure to hold user data
-type HandleUser struct {
-	ID          string `json:"id"`
-	Login       string `json:"login"`
-	Password    string `json:"password"`
-	Permissions int8   `json:"permissions"`
-}
-
-// In-memory storage for demonstration purposes
-var (
-	usersMutex sync.Mutex
-	users      = make(map[string]HandleUser) // user mock
-	nextID     = 1
-)
-
-// Login handler for user login
+// loginHandler handles user login requests by validating credentials and generating a token.
+// @param w http.ResponseWriter for returning the response to the client.
+// @param r *http.Request containing the user's login credentials in the request body.
 func (h *Handler) loginHandler(w http.ResponseWriter, r *http.Request) {
+	// user credentials to be checked
 	var creds struct {
 		Login    string `json:"login"`
 		Password string `json:"password"`
@@ -69,7 +44,7 @@ func (h *Handler) loginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Check credentials (mock implementation)
+	// Taking credentials, chcecking existance of user and generating access and refresh token
 	ctx := context.Background()
 	token, err := h.service.CreateToken(ctx, creds.Login, creds.Password)
 	if err != nil {
@@ -81,8 +56,11 @@ func (h *Handler) loginHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(token)
 }
 
-// Create user handler
+// createUserHandler handles requests to create a new user.
+// @param w http.ResponseWriter for returning the response to the client.
+// @param r *http.Request containing the user's credentials in the request body.
 func (h *Handler) createUserHandler(w http.ResponseWriter, r *http.Request) {
+	// user credentials to be checked
 	var creds struct {
 		Login    string `json:"login"`
 		Password string `json:"password"`
@@ -93,6 +71,7 @@ func (h *Handler) createUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Appending new user to the storage also checking existance of user
 	ctx := context.Background()
 	id, err := h.service.NewUser(ctx, User{"", creds.Login, creds.Password, 0})
 
@@ -106,8 +85,11 @@ func (h *Handler) createUserHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(map[string]string{"id": id})
 }
 
-// Delete user handler
+// deleteUserHandler handles requests to delete a user.
+// @param w http.ResponseWriter for returning the response to the client.
+// @param r *http.Request containing the access token in the request body.
 func (h *Handler) deleteUserHandler(w http.ResponseWriter, r *http.Request) {
+	// token of corresponding user
 	var token struct {
 		Access string `json:"token"`
 	}
@@ -120,6 +102,7 @@ func (h *Handler) deleteUserHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Background()
 	ID, err := h.service.GetIDByToken(ctx, token.Access)
 
+	// if token is not correct or token is expired quit
 	if err != nil {
 		http.Error(w, "Token incorrect", http.StatusBadRequest)
 	}
@@ -133,31 +116,11 @@ func (h *Handler) deleteUserHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-// Edit user handler
-func editUserHandler(w http.ResponseWriter, r *http.Request) {
-	id := r.URL.Query().Get("id")
-	var updatedUser HandleUser
-	if err := json.NewDecoder(r.Body).Decode(&updatedUser); err != nil {
-		http.Error(w, "Invalid request", http.StatusBadRequest)
-		return
-	}
-
-	usersMutex.Lock()
-	defer usersMutex.Unlock()
-
-	if user, exists := users[id]; exists {
-		user.Login = updatedUser.Login
-		user.Password = updatedUser.Password
-		user.Permissions = updatedUser.Permissions
-		users[id] = user
-		json.NewEncoder(w).Encode(user)
-		return
-	}
-
-	http.Error(w, "User not found", http.StatusNotFound)
-}
-
+// getting ID of user, private api
+// @param w http.ResponseWriter for returning the response to the client.
+// @param r *http.Request containing the access token in the request body.
 func (h *Handler) getID(w http.ResponseWriter, r *http.Request) {
+	// token of corresponding user
 	var token struct {
 		Access string `json:"token"`
 	}
@@ -179,7 +142,11 @@ func (h *Handler) getID(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(map[string]string{"id": ID})
 }
 
+// getting Permissions of user, private api
+// @param w http.ResponseWriter for returning the response to the client.
+// @param r *http.Request containing the access token in the request body.
 func (h *Handler) getPermissions(w http.ResponseWriter, r *http.Request) {
+	// token of corresponding user
 	var token struct {
 		Access string `json:"token"`
 	}
@@ -208,7 +175,13 @@ func (h *Handler) getPermissions(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(map[string]string{"permissios": strconv.Itoa(int(Info.Permissions))})
 }
 
+// edit user information by user with corresponding permissions
+// @param w http.ResponseWriter for returning the response to the client.
+// @param r *http.Request containing the access token in the request body.
 func (h *Handler) editUserHandler(w http.ResponseWriter, r *http.Request) {
+	// token is token of user with corresponding permissions, admin
+	// id - id of user to be edited
+	// newLogin, newPassword - newData for editing
 	var editor struct {
 		Access   string `json:"token"`
 		ID       string `json:"id"`
@@ -221,6 +194,7 @@ func (h *Handler) editUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// user editing with checking token and user to be edited
 	ctx := context.Background()
 	_, err := h.service.EditUser(ctx, editor.Access, User{Login: editor.Login, Password: editor.Password, ID: editor.ID, Permissions: 0})
 	if err != nil {
@@ -231,7 +205,13 @@ func (h *Handler) editUserHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
+// give permissions to user by user with corresponding permissions
+// @param w http.ResponseWriter for returning the response to the client.
+// @param r *http.Request containing the access token in the request body.
 func (h *Handler) givePermissionHandler(w http.ResponseWriter, r *http.Request) {
+	// token is token of user with corresponding permissions, admin
+	// id - id of user to be edited
+	// Permission - permissions to be edited
 	var editor struct {
 		Access     string `json:"token"`
 		ID         string `json:"id"`
@@ -254,7 +234,9 @@ func (h *Handler) givePermissionHandler(w http.ResponseWriter, r *http.Request) 
 	w.WriteHeader(http.StatusOK)
 }
 
-// Login handler for user login
+// refresh access token for user
+// @param w http.ResponseWriter for returning the response to the client.
+// @param r *http.Request containing the access token in the request body.
 func (h *Handler) RefreshHandler(w http.ResponseWriter, r *http.Request) {
 	var tokens struct {
 		Acess   string `json:"access"`
@@ -266,7 +248,6 @@ func (h *Handler) RefreshHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Check credentials (mock implementation)
 	ctx := context.Background()
 	token, err := h.service.RefreshToken(ctx, tokens.Acess, tokens.Refresh)
 	if err != nil {
@@ -277,7 +258,8 @@ func (h *Handler) RefreshHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(token)
 }
 
-// Main function to start the server
+// Initing public routing
+// @param m http.ServeMux public mux
 func (h *Handler) InitPublic(m *http.ServeMux) {
 	m.HandleFunc("/user/login", h.loginHandler)
 	m.HandleFunc("/user/create", h.createUserHandler)
@@ -287,6 +269,8 @@ func (h *Handler) InitPublic(m *http.ServeMux) {
 	m.HandleFunc("/user/refresh", h.RefreshHandler)
 }
 
+// Initing public routing
+// @param m http.ServeMux private mux
 func (h *Handler) InitPrivate(m *http.ServeMux) {
 	m.HandleFunc("/user/id", h.getID)
 	m.HandleFunc("/user/permissions", h.getPermissions)

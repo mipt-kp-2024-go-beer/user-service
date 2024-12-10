@@ -10,12 +10,14 @@ import (
 	"github.com/mipt-kp-2024-go-beer/user-service/internal/oops"
 )
 
+// UserValues holds the information for a user, including their ID, password, and permissions.
 type UserValues struct {
 	ID          string
 	Password    string
 	Permissions uint
 }
 
+// UserDb is a thread-safe structure that stores user information indexed by their login.
 type UserDb struct {
 	mux sync.RWMutex
 	// user login is used as a key
@@ -23,6 +25,7 @@ type UserDb struct {
 	Users map[string]UserValues
 }
 
+// Token represents an authentication token associated with a user.
 type Token struct {
 	// acess token is used as a key
 	refresh    string
@@ -30,22 +33,28 @@ type Token struct {
 	user       string
 }
 
+// TokenDb is a thread-safe structure that stores tokens indexed by their access tokens.
 type TokenDb struct {
 	mux    sync.RWMutex
 	Tokens map[string]Token
 }
 
+// Storage combines UserDb and TokenDb to provide a unified storage solution for users and tokens.
 type Storage struct {
 	Users  UserDb
 	Tokens TokenDb
 }
 
+// curID is a global variable for generating unique IDs.
 var curID = 0
 
+// Storage constructor
 func NewStorage() *Storage {
 	return &Storage{UserDb{Users: make(map[string]UserValues)}, TokenDb{Tokens: make(map[string]Token)}}
 }
 
+// Load users table to user by user with corresponding permissions
+// @param ctx context.Context for managing the scope of the operation.
 func (s *Storage) LoadUsers(ctx context.Context) ([]users.User, error) {
 	s.Users.mux.RLock()
 	defer s.Users.mux.RUnlock()
@@ -63,6 +72,9 @@ func (s *Storage) LoadUsers(ctx context.Context) ([]users.User, error) {
 	return output, nil
 }
 
+// Check if user is present in current project
+// @param ctx context.Context for managing the scope of the operation.
+// @param user users.User user to be checked
 func (s *Storage) CheckUser(ctx context.Context, user users.User) (id string, err error) {
 	s.Users.mux.Lock()
 	defer s.Users.mux.Unlock()
@@ -74,6 +86,9 @@ func (s *Storage) CheckUser(ctx context.Context, user users.User) (id string, er
 	return val.ID, nil
 }
 
+// Check if token is present in current project
+// @param ctx context.Context for managing the scope of the operation.
+// @param access users.User user to be checked
 func (s *Storage) CheckToken(ctx context.Context, access string) (users.Token, error) {
 	s.Tokens.mux.RLock()
 	defer s.Tokens.mux.RUnlock()
@@ -88,6 +103,9 @@ func (s *Storage) CheckToken(ctx context.Context, access string) (users.Token, e
 	return users.Token{}, nil
 }
 
+// Save user if it is not in the d
+// @param ctx context.Context for managing the scope of the operation.
+// @param access users.User user to be added
 func (s *Storage) SaveUser(ctx context.Context, user users.User) (id string, err error) {
 	s.Users.mux.Lock()
 	defer s.Users.mux.Unlock()
@@ -102,6 +120,9 @@ func (s *Storage) SaveUser(ctx context.Context, user users.User) (id string, err
 	return ID, nil
 }
 
+// Save user if it is not in the d
+// @param ctx context.Context for managing the scope of the operation.
+// @param access users.User user to be added
 func (s *Storage) LoadTokens(ctx context.Context) ([]users.Token, error) {
 	s.Tokens.mux.RLock()
 	defer s.Tokens.mux.RUnlock()
@@ -118,6 +139,9 @@ func (s *Storage) LoadTokens(ctx context.Context) ([]users.Token, error) {
 	return output, nil
 }
 
+// Save user if it is not in the d
+// @param ctx context.Context for managing the scope of the operation.
+// @param access users.User user to be added
 func (s *Storage) GetSessionID(ctx context.Context, access string) (string, error) {
 	s.Tokens.mux.RLock()
 	defer s.Tokens.mux.RUnlock()

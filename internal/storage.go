@@ -19,7 +19,6 @@ type Token struct {
 }
 
 type Service interface {
-	//Users(ctx context.Context) ([]User, error)
 	GetUniqueToken(ctx context.Context) (Token, error)
 	CheckUser(ctx context.Context, user User) (bool, string, error)
 	IsExpired(ctx context.Context, access string) (bool, error)
@@ -33,8 +32,6 @@ type Service interface {
 	EditUser(ctx context.Context, token string, user User) (User, error)
 	GivePermission(ctx context.Context, token string, ID string, Permissions uint) error
 	RefreshToken(ctx context.Context, access string, refresh string) (Token, error)
-	//Tokens(ctx context.Context) ([]Token, error)
-	//Place(ctx context.Context, user User) (id string, err error)
 }
 
 type Store interface {

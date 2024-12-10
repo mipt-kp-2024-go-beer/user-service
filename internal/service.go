@@ -4,7 +4,6 @@ import (
 	"context"
 	"crypto/rand"
 	"encoding/hex"
-	"fmt"
 	"time"
 
 	"github.com/mipt-kp-2024-go-beer/user-service/internal/oops"
@@ -48,26 +47,26 @@ type AppService struct {
 	store Store
 }
 
+// Service constructor
 func NewAppService(s Store) *AppService {
 	return &AppService{
 		store: s,
 	}
 }
 
-// generating random session token
-func (s *AppService) GenerateSecureToken(ctx context.Context, length int) string {
-	b := make([]byte, length)
-	if _, err := rand.Read(b); err != nil {
-		return ""
-	}
-	return hex.EncodeToString(b)
-}
-
+// CheckUser checks if the provided user exists in the store.
+// @param ctx context.Context for managing the scope of the operation.
+// @param user User representing the user credentials to check.
+// @return bool indicating whether the user exists, string containing user ID (if found), and error (if any).
 func (s *AppService) CheckUser(ctx context.Context, user User) (bool, string, error) {
 	ID, err := s.store.CheckUser(ctx, user)
 	return err == nil, ID, err
 }
 
+// NewUser creates a new user in the store.
+// @param ctx context.Context for managing the scope of the operation.
+// @param user User containing the new user credentials.
+// @return string containing the new user ID or an error if user already exists.
 func (s *AppService) NewUser(ctx context.Context, user User) (string, error) {
 	_, err := s.store.CheckUser(ctx, user)
 	if err == oops.ErrNoUser {
@@ -77,8 +76,13 @@ func (s *AppService) NewUser(ctx context.Context, user User) (string, error) {
 	return "", err
 }
 
+// CreateToken creates a new authentication token for the user based on their credentials.
+// @param ctx context.Context for managing the scope of the operation.
+// @param login string for the user's login name.
+// @param password string for the user's password.
+// @return Token representing the created token and an error (if any).
 func (s *AppService) CreateToken(ctx context.Context, login string, password string) (Token, error) {
-	// Check credentials
+	// Check credentials of user, exit if there is no user with such credentials
 	checked, ID, err := s.CheckUser(ctx, User{"", login, password, 0})
 	if err != nil || !checked {
 		return Token{}, oops.ErrNoUser
@@ -93,16 +97,24 @@ func (s *AppService) CreateToken(ctx context.Context, login string, password str
 	return token, s.Bind(ctx, token, ID)
 }
 
+// Bind associates a token with a user ID by saving it in the store.
+// @param ctx context.Context for managing the scope of the operation.
+// @param token Token to be bound to the user ID.
+// @param ID string representing the user ID to which the token will be associated.
+// @return error indicating if the operation was successful or if an error occurred.
 func (s *AppService) Bind(ctx context.Context, token Token, ID string) error {
 	return s.store.SaveToken(ctx, token, ID)
 }
 
+// GetUniqueToken generates a unique access and refresh token.
+// @param ctx context.Context for managing the scope of the operation.
+// @return Token containing generated access and refresh tokens, and an error if the generation fails.
 func (s *AppService) GetUniqueToken(ctx context.Context) (Token, error) {
 	token := Token{}
 	access := make([]byte, TokenLen)
 	got := false
 
-	// generate access
+	// Generate unique access token
 	for i := 0; i < GenerateRetries; i++ {
 		_, err := rand.Read(access)
 		token.Access = string(access)
@@ -115,6 +127,7 @@ func (s *AppService) GetUniqueToken(ctx context.Context) (Token, error) {
 		}
 	}
 
+	// error of getting unique access token
 	if !got {
 		return Token{}, oops.ErrNoTokens
 	}
@@ -122,7 +135,7 @@ func (s *AppService) GetUniqueToken(ctx context.Context) (Token, error) {
 	refresh := make([]byte, TokenLen)
 	got = false
 
-	// generate refresh
+	// Generate unique refresh token
 	for i := 0; i < GenerateRetries; i++ {
 		_, err := rand.Read(refresh)
 		token.Refresh = string(refresh)
@@ -135,22 +148,22 @@ func (s *AppService) GetUniqueToken(ctx context.Context) (Token, error) {
 		}
 	}
 
+	// error of getting unique refresh token
 	if !got {
 		return Token{}, nil
 	}
 
-	return Token{Access: hex.EncodeToString(access), Refresh: hex.EncodeToString(refresh), Expiration: time.Now().Add(time.Minute * 10)}, nil
+	return Token{
+		Access:     hex.EncodeToString(access),
+		Refresh:    hex.EncodeToString(refresh),
+		Expiration: time.Now().Add(time.Minute * 10),
+	}, nil
 }
 
-func (s *AppService) Products(ctx context.Context) ([]User, error) {
-	products, err := s.store.LoadUsers(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("firdge.Products() error: %w", err)
-	}
-
-	return products, nil
-}
-
+// GetIDByToken retrieves the user ID associated with the access token.
+// @param ctx context.Context for managing the scope of the operation.
+// @param access string representing the user's access token.
+// @return string representing the user ID and an error if retrieval fails.
 func (s *AppService) GetIDByToken(ctx context.Context, access string) (string, error) {
 
 	_, err := s.store.CheckToken(ctx, access)
@@ -170,32 +183,45 @@ func (s *AppService) GetIDByToken(ctx context.Context, access string) (string, e
 	return s.store.GetSessionID(ctx, access)
 }
 
+// IsExpired checks if the provided access token has expired.
+// @param ctx context.Context for managing the scope of the operation.
+// @param access string representing the access token to check.
+// @return bool indicating whether the token is expired and an error if the check fails.
 func (s *AppService) IsExpired(ctx context.Context, access string) (bool, error) {
 	return s.store.TokenExpired(ctx, access)
 }
 
+// DeleteToken removes the specified access token from the store.
+// @param ctx context.Context for managing the scope of the operation.
+// @param access string representing the access token to delete.
+// @return error indicating if the operation was successful or if an error occurred.
 func (s *AppService) DeleteToken(ctx context.Context, access string) error {
 	return s.store.PopToken(ctx, access)
 }
 
-func (s *AppService) Place(ctx context.Context, product User) (id string, err error) {
-	id, err = s.store.SaveUser(ctx, product)
-	if err != nil {
-		return "", err
-	}
-
-	return id, nil
-}
-
+// UserInfo retrieves user information based on the user ID provided.
+// @param ctx context.Context for managing the scope of the operation.
+// @param ID string representing the user ID to retrieve information for.
+// @return User containing the details of the requested user and an error if retrieval fails.
 func (s *AppService) UserInfo(ctx context.Context, ID string) (User, error) {
 	return s.store.User(ctx, ID)
 }
 
+// DeleteUser removes a user from the store based on their ID.
+// @param ctx context.Context for managing the scope of the operation.
+// @param ID string representing the user ID to delete.
+// @return error indicating if the operation was successful or if an error occurred.
 func (s *AppService) DeleteUser(ctx context.Context, ID string) error {
 	return s.store.PopUser(ctx, ID)
 }
 
+// EditUser modifies an existing user's information.
+// @param ctx context.Context for managing the scope of the operation.
+// @param token string containing the access token of the user making the request.
+// @param user User containing the updated user details.
+// @return User with the updated information and an error if the operation fails.
 func (s *AppService) EditUser(ctx context.Context, token string, user User) (User, error) {
+	// get permission of user with token
 	ID, err := s.GetIDByToken(ctx, token)
 	if err != nil {
 		return User{}, oops.ErrTokenExistance
@@ -213,12 +239,17 @@ func (s *AppService) EditUser(ctx context.Context, token string, user User) (Use
 	return s.store.ChangeUser(ctx, user)
 }
 
+// GivePermission grants permissions to a specified user.
+// @param ctx context.Context for managing the scope of the operation.
+// @param token string containing the access token of the admin user.
+// @param ID string representing the user ID to which permissions will be given.
+// @param Permissions uint representing the permission bits to set.
+// @return error indicating if the operation was successful or if an error occurred.
 func (s *AppService) GivePermission(ctx context.Context, token string, ID string, Permissions uint) error {
 	adminID, err := s.GetIDByToken(ctx, token)
 	if err != nil {
 		return oops.ErrTokenExistance
 	}
-	println("user got")
 
 	info, errinfo := s.UserInfo(ctx, adminID)
 	if errinfo != nil {
@@ -232,6 +263,12 @@ func (s *AppService) GivePermission(ctx context.Context, token string, ID string
 	return s.store.SetPermission(ctx, ID, Permissions)
 }
 
+// RefreshToken handles the token refresh operation by validating the provided access and refresh tokens,
+// and generating a new token if valid.
+// @param ctx context.Context for managing the scope of the operation.
+// @param access string representing the user's existing access token.
+// @param refresh string representing the user's refresh token.
+// @return Token containing the newly generated tokens and an error, if any occurs during the process.
 func (s *AppService) RefreshToken(ctx context.Context, access string, refresh string) (Token, error) {
 	token, err := s.store.CheckToken(ctx, access)
 	if err == nil {
