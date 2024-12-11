@@ -2,6 +2,7 @@ package memory
 
 import (
 	"context"
+	"fmt"
 	"strconv"
 	"sync"
 	"time"
@@ -83,6 +84,10 @@ func (s *Storage) CheckUser(ctx context.Context, user users.User) (id string, er
 		return val.ID, oops.ErrNoUser
 	}
 
+	if val.Password != user.Password {
+		return val.ID, oops.ErrNoUser
+	}
+
 	return val.ID, nil
 }
 
@@ -109,6 +114,7 @@ func (s *Storage) CheckToken(ctx context.Context, access string) (users.Token, e
 func (s *Storage) SaveUser(ctx context.Context, user users.User) (id string, err error) {
 	s.Users.mux.Lock()
 	defer s.Users.mux.Unlock()
+	fmt.Printf("we got here")
 	_, ok := s.Users.Users[user.Login]
 	if ok {
 		return user.ID, oops.ErrDuplicateUser

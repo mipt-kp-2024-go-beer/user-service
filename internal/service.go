@@ -73,7 +73,7 @@ func (s *AppService) NewUser(ctx context.Context, user User) (string, error) {
 		return s.store.SaveUser(ctx, user)
 	}
 
-	return "", err
+	return "", oops.ErrNoUser
 }
 
 // CreateToken creates a new authentication token for the user based on their credentials.
@@ -127,6 +127,8 @@ func (s *AppService) GetUniqueToken(ctx context.Context) (Token, error) {
 		}
 	}
 
+	println("err1")
+
 	// error of getting unique access token
 	if !got {
 		return Token{}, oops.ErrNoTokens
@@ -148,10 +150,14 @@ func (s *AppService) GetUniqueToken(ctx context.Context) (Token, error) {
 		}
 	}
 
+	println("err2")
+
 	// error of getting unique refresh token
 	if !got {
 		return Token{}, nil
 	}
+
+	println("err3")
 
 	return Token{
 		Access:     hex.EncodeToString(access),

@@ -3,6 +3,7 @@ package database
 import (
 	"context"
 	"database/sql"
+	"encoding/hex"
 	"fmt"
 	"time"
 
@@ -67,7 +68,10 @@ func (s *Storage) CheckUser(ctx context.Context, user users.User) (string, error
 
 func (s *Storage) CheckToken(ctx context.Context, access string) (users.Token, error) {
 	var token users.Token
-	err := s.db.QueryRowContext(ctx, "SELECT refresh_token, expiration FROM tokens WHERE access_token = $1", access).Scan(&token.Refresh, &token.Expiration)
+	bytes := []byte(access)
+	err := s.db.QueryRowContext(ctx, "SELECT refresh_token, expiration FROM tokens WHERE access_token = $1", hex.EncodeToString(bytes)).Scan(&token.Refresh, &token.Expiration)
+
+	fmt.Printf("%s", err)
 
 	if err == sql.ErrNoRows {
 		return users.Token{}, nil
@@ -138,9 +142,13 @@ func (s *Storage) GetSessionID(ctx context.Context, access string) (string, erro
 }
 
 func (s *Storage) SaveToken(ctx context.Context, token users.Token, ID string) error {
+	bytes_access := []byte(token.Access)
+	bytes_refresh := []byte(token.Refresh)
 	_, err := s.db.ExecContext(ctx,
 		"INSERT INTO tokens (access_token, refresh_token, expiration, user_id) VALUES ($1, $2, $3, $4)",
-		token.Access, token.Refresh, token.Expiration, ID)
+		hex.EncodeToString(bytes_access), hex.EncodeToString(bytes_refresh), token.Expiration, ID)
+
+	fmt.Printf("%s", err)
 	return err
 }
 

@@ -2,7 +2,7 @@
 host: 127.0.0.1
 publicport: 8080
 privateport: 8081
-database: db
+database: usersdb
 login: admin
 password: superuser
-#database: userstable
+user: dbuser

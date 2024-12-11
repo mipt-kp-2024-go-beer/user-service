@@ -1,0 +1,335 @@
+2024-12-10 21:05:29.487 +04 [51114] LOG:  starting PostgreSQL 18devel on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 11.4.0-1ubuntu1~22.04) 11.4.0, 64-bit
+2024-12-10 21:05:29.487 +04 [51114] LOG:  listening on IPv4 address "0.0.0.0", port 5432
+2024-12-10 21:05:29.487 +04 [51114] LOG:  listening on IPv6 address "::", port 5432
+2024-12-10 21:05:29.489 +04 [51114] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5432"
+2024-12-10 21:05:29.495 +04 [51118] LOG:  database system was interrupted; last known up at 2024-12-07 17:05:42 +04
+2024-12-10 21:05:29.594 +04 [51118] LOG:  database system was not properly shut down; automatic recovery in progress
+2024-12-10 21:05:29.598 +04 [51118] LOG:  redo starts at 0/16F8C900
+2024-12-10 21:05:29.598 +04 [51118] LOG:  invalid record length at 0/16F8CA08: expected at least 24, got 0
+2024-12-10 21:05:29.598 +04 [51118] LOG:  redo done at 0/16F8C9D0 system usage: CPU: user: 0.00 s, system: 0.00 s, elapsed: 0.00 s
+2024-12-10 21:05:29.606 +04 [51116] LOG:  checkpoint starting: end-of-recovery immediate wait
+2024-12-10 21:05:29.613 +04 [51116] LOG:  checkpoint complete: wrote 0 buffers (0.0%), wrote 2 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=0.002 s, sync=0.002 s, total=0.009 s; sync files=3, longest=0.001 s, average=0.001 s; distance=0 kB, estimate=0 kB; lsn=0/16F8CA08, redo lsn=0/16F8CA08
+2024-12-10 21:05:29.615 +04 [51114] LOG:  database system is ready to accept connections
+2024-12-10 21:06:09.285 +04 [51175] LOG:  starting PostgreSQL 18devel on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 11.4.0-1ubuntu1~22.04) 11.4.0, 64-bit
+2024-12-10 21:06:09.285 +04 [51175] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2024-12-10 21:06:09.286 +04 [51175] FATAL:  lock file "/tmp/.s.PGSQL.5432.lock" already exists
+2024-12-10 21:06:09.286 +04 [51175] HINT:  Is another postmaster (PID 51114) using socket file "/tmp/.s.PGSQL.5432"?
+2024-12-10 21:06:09.287 +04 [51175] LOG:  database system is shut down
+2024-12-10 21:06:22.784 +04 [51114] LOG:  received fast shutdown request
+2024-12-10 21:06:22.790 +04 [51114] LOG:  aborting any active transactions
+2024-12-10 21:06:22.790 +04 [51114] LOG:  background worker "logical replication launcher" (PID 51121) exited with exit code 1
+2024-12-10 21:06:22.790 +04 [51116] LOG:  shutting down
+2024-12-10 21:06:22.791 +04 [51116] LOG:  checkpoint starting: shutdown immediate
+2024-12-10 21:06:22.796 +04 [51116] LOG:  checkpoint complete: wrote 0 buffers (0.0%), wrote 0 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=0.001 s, sync=0.001 s, total=0.006 s; sync files=0, longest=0.000 s, average=0.000 s; distance=0 kB, estimate=0 kB; lsn=0/16F8CAB8, redo lsn=0/16F8CAB8
+2024-12-10 21:06:22.800 +04 [51114] LOG:  database system is shut down
+2024-12-10 21:06:28.548 +04 [51184] LOG:  starting PostgreSQL 18devel on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 11.4.0-1ubuntu1~22.04) 11.4.0, 64-bit
+2024-12-10 21:06:28.548 +04 [51184] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2024-12-10 21:06:28.551 +04 [51184] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5432"
+2024-12-10 21:06:28.554 +04 [51187] LOG:  database system was shut down at 2024-12-10 21:05:58 +04
+2024-12-10 21:06:28.556 +04 [51184] LOG:  database system is ready to accept connections
+2024-12-10 21:06:50.005 +04 [51194] FATAL:  database "usersdb" does not exist
+2024-12-10 21:11:28.651 +04 [51185] LOG:  checkpoint starting: time
+2024-12-10 21:11:32.871 +04 [51185] LOG:  checkpoint complete: wrote 42 buffers (0.3%), wrote 3 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=4.210 s, sync=0.003 s, total=4.221 s; sync files=11, longest=0.001 s, average=0.001 s; distance=328 kB, estimate=328 kB; lsn=0/178AA78, redo lsn=0/178AA20
+2024-12-10 21:40:06.717 +04 [51871] FATAL:  database "usersdb" does not exist
+2024-12-10 21:43:17.370 +04 [52246] FATAL:  database "usersdb" does not exist
+2024-12-10 21:44:30.836 +04 [52399] FATAL:  role "usersdb" does not exist
+2024-12-10 21:44:54.694 +04 [52405] FATAL:  database "usersdb" does not exist
+2024-12-10 21:45:23.783 +04 [52422] FATAL:  database "usersdb" does not exist
+2024-12-10 21:46:37.649 +04 [52550] FATAL:  role "root" does not exist
+2024-12-10 21:46:43.921 +04 [52554] FATAL:  database "usersdb" does not exist
+2024-12-10 21:47:07.064 +04 [52559] FATAL:  role "postgres" does not exist
+2024-12-10 21:47:13.618 +04 [52564] FATAL:  database "usersdb" does not exist
+2024-12-10 21:47:20.959 +04 [52567] FATAL:  database "krym4s" does not exist
+2024-12-10 21:47:24.774 +04 [52569] FATAL:  database "usersdb" does not exist
+2024-12-10 21:47:59.811 +04 [52584] FATAL:  database "template0" is not currently accepting connections
+2024-12-10 21:49:32.138 +04 [51185] LOG:  checkpoint starting: immediate force wait
+2024-12-10 21:49:32.184 +04 [51185] LOG:  checkpoint complete: wrote 934 buffers (5.7%), wrote 1 SLRU buffers; 1 WAL file(s) added, 0 removed, 0 recycled; write=0.013 s, sync=0.010 s, total=0.047 s; sync files=302, longest=0.001 s, average=0.001 s; distance=8556 kB, estimate=8556 kB; lsn=0/1FE5D58, redo lsn=0/1FE5D00
+2024-12-10 21:54:32.282 +04 [51185] LOG:  checkpoint starting: time
+2024-12-10 21:54:32.800 +04 [51185] LOG:  checkpoint complete: wrote 5 buffers (0.0%), wrote 1 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=0.502 s, sync=0.007 s, total=0.518 s; sync files=6, longest=0.006 s, average=0.002 s; distance=5 kB, estimate=7701 kB; lsn=0/1FE7230, redo lsn=0/1FE71D8
+2024-12-10 23:52:17.642 +04 [52659] ERROR:  relation "usersdb" does not exist at character 13
+2024-12-10 23:52:17.642 +04 [52659] STATEMENT:  insert into usersdb values ('xyz', 'xyz', 0)
+	;
+2024-12-10 23:54:30.192 +04 [51185] LOG:  checkpoint starting: time
+2024-12-10 23:54:32.815 +04 [51185] LOG:  checkpoint complete: wrote 26 buffers (0.2%), wrote 1 SLRU buffers; 0 WAL file(s) added, 0 removed, 1 recycled; write=2.607 s, sync=0.007 s, total=2.624 s; sync files=21, longest=0.006 s, average=0.001 s; distance=105 kB, estimate=6941 kB; lsn=0/20016F8, redo lsn=0/2001668
+2024-12-10 23:54:48.781 +04 [52659] ERROR:  invalid input syntax for type integer: "xyz" at character 27
+2024-12-10 23:54:48.781 +04 [52659] STATEMENT:  insert into users values ('xyz', 'xyz', 0);
+2024-12-10 23:59:30.915 +04 [51185] LOG:  checkpoint starting: time
+2024-12-10 23:59:34.830 +04 [51185] LOG:  checkpoint complete: wrote 39 buffers (0.2%), wrote 1 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=3.909 s, sync=0.003 s, total=3.916 s; sync files=32, longest=0.001 s, average=0.001 s; distance=152 kB, estimate=6263 kB; lsn=0/2027AA8, redo lsn=0/2027A50
+2024-12-11 00:04:30.891 +04 [51185] LOG:  checkpoint starting: time
+2024-12-11 00:04:31.004 +04 [51185] LOG:  checkpoint complete: wrote 1 buffers (0.0%), wrote 0 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=0.101 s, sync=0.003 s, total=0.113 s; sync files=1, longest=0.003 s, average=0.003 s; distance=2 kB, estimate=5636 kB; lsn=0/2028578, redo lsn=0/2028520
+2024-12-11 00:10:21.114 +04 [59194] FATAL:  database "dbuser" does not exist
+2024-12-11 00:10:41.775 +04 [59603] FATAL:  database "krym4s" does not exist
+2024-12-11 00:13:17.770 +04 [56501] ERROR:  role "postgres" does not exist
+2024-12-11 00:13:17.770 +04 [56501] STATEMENT:  ALTER USER postgres WITH PASSWORD '12345678';
+2024-12-11 00:13:30.302 +04 [56501] ERROR:  permission denied to create role
+2024-12-11 00:13:30.302 +04 [56501] DETAIL:  Only roles with the CREATEROLE attribute may create roles.
+2024-12-11 00:13:30.302 +04 [56501] STATEMENT:  create user postgres;
+2024-12-11 00:14:16.397 +04 [60609] ERROR:  permission denied for table users
+2024-12-11 00:14:16.397 +04 [60609] STATEMENT:  SELECT id FROM users WHERE login = $1 AND password = $2
+2024-12-11 00:14:22.060 +04 [60609] ERROR:  permission denied for table users
+2024-12-11 00:14:22.060 +04 [60609] STATEMENT:  SELECT id FROM users WHERE login = $1 AND password = $2
+2024-12-11 00:14:28.580 +04 [60609] ERROR:  permission denied for table users
+2024-12-11 00:14:28.580 +04 [60609] STATEMENT:  SELECT id FROM users WHERE login = $1 AND password = $2
+2024-12-11 00:14:30.204 +04 [51185] LOG:  checkpoint starting: time
+2024-12-11 00:14:30.823 +04 [51185] LOG:  checkpoint complete: wrote 6 buffers (0.0%), wrote 1 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=0.603 s, sync=0.007 s, total=0.619 s; sync files=7, longest=0.006 s, average=0.001 s; distance=4 kB, estimate=5073 kB; lsn=0/2029930, redo lsn=0/20298D8
+2024-12-11 00:14:32.854 +04 [60609] ERROR:  permission denied for table users
+2024-12-11 00:14:32.854 +04 [60609] STATEMENT:  SELECT id FROM users WHERE login = $1 AND password = $2
+2024-12-11 00:14:38.258 +04 [60609] ERROR:  permission denied for table users
+2024-12-11 00:14:38.258 +04 [60609] STATEMENT:  SELECT id FROM users WHERE login = $1 AND password = $2
+2024-12-11 09:53:58.326 +04 [60609] ERROR:  permission denied for table users
+2024-12-11 09:53:58.326 +04 [60609] STATEMENT:  SELECT id FROM users WHERE login = $1 AND password = $2
+2024-12-11 09:54:12.486 +04 [60609] ERROR:  permission denied for table users
+2024-12-11 09:54:12.486 +04 [60609] STATEMENT:  SELECT id FROM users WHERE login = $1 AND password = $2
+2024-12-11 09:56:20.099 +04 [60609] ERROR:  permission denied for table users
+2024-12-11 09:56:20.099 +04 [60609] STATEMENT:  SELECT id FROM users WHERE login = $1 AND password = $2
+2024-12-11 09:56:21.548 +04 [60609] ERROR:  permission denied for table users
+2024-12-11 09:56:21.548 +04 [60609] STATEMENT:  SELECT id FROM users WHERE login = $1 AND password = $2
+2024-12-11 09:56:27.273 +04 [60609] ERROR:  permission denied for table users
+2024-12-11 09:56:27.273 +04 [60609] STATEMENT:  SELECT id FROM users WHERE login = $1 AND password = $2
+2024-12-11 10:00:01.467 +04 [60609] ERROR:  permission denied for table users
+2024-12-11 10:00:01.467 +04 [60609] STATEMENT:  SELECT id FROM users WHERE login = $1 AND password = $2
+2024-12-11 10:00:09.346 +04 [51185] LOG:  checkpoint starting: time
+2024-12-11 10:00:11.263 +04 [51185] LOG:  checkpoint complete: wrote 19 buffers (0.1%), wrote 1 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=1.905 s, sync=0.008 s, total=1.917 s; sync files=18, longest=0.006 s, average=0.001 s; distance=84 kB, estimate=4574 kB; lsn=0/203EAC8, redo lsn=0/203EA70
+2024-12-11 10:00:58.746 +04 [61888] ERROR:  permission denied for table users
+2024-12-11 10:00:58.746 +04 [61888] STATEMENT:  SELECT id FROM users WHERE login = $1 AND password = $2
+2024-12-11 10:01:07.919 +04 [61888] ERROR:  permission denied for table users
+2024-12-11 10:01:07.919 +04 [61888] STATEMENT:  SELECT id FROM users WHERE login = $1 AND password = $2
+2024-12-11 10:02:12.861 +04 [62220] ERROR:  permission denied for table users
+2024-12-11 10:02:12.861 +04 [62220] STATEMENT:  SELECT id FROM users WHERE login = $1 AND password = $2
+2024-12-11 10:02:16.514 +04 [62220] ERROR:  permission denied for table users
+2024-12-11 10:02:16.514 +04 [62220] STATEMENT:  SELECT id FROM users WHERE login = $1 AND password = $2
+2024-12-11 10:03:19.015 +04 [62867] ERROR:  permission denied for table users
+2024-12-11 10:03:19.015 +04 [62867] STATEMENT:  SELECT id FROM users WHERE login = $1 AND password = $2
+2024-12-11 10:03:23.049 +04 [62867] ERROR:  permission denied for table users
+2024-12-11 10:03:23.049 +04 [62867] STATEMENT:  SELECT id FROM users WHERE login = $1 AND password = $2
+2024-12-11 10:04:53.251 +04 [63313] ERROR:  permission denied for table users
+2024-12-11 10:04:53.251 +04 [63313] STATEMENT:  SELECT id FROM users WHERE login = $1 AND password = $2
+2024-12-11 10:04:55.239 +04 [63313] ERROR:  permission denied for table users
+2024-12-11 10:04:55.239 +04 [63313] STATEMENT:  SELECT id FROM users WHERE login = $1 AND password = $2
+2024-12-11 10:05:53.173 +04 [63608] ERROR:  permission denied for table users
+2024-12-11 10:05:53.173 +04 [63608] STATEMENT:  SELECT id FROM users WHERE login = $1 AND password = $2
+2024-12-11 10:06:01.369 +04 [63608] ERROR:  permission denied for table users
+2024-12-11 10:06:01.369 +04 [63608] STATEMENT:  SELECT id FROM users WHERE login = $1 AND password = $2
+2024-12-11 10:07:38.678 +04 [64243] ERROR:  permission denied for table users
+2024-12-11 10:07:38.678 +04 [64243] STATEMENT:  SELECT id FROM users WHERE login = $1 AND password = $2
+2024-12-11 10:07:42.121 +04 [64356] ERROR:  permission denied for table users
+2024-12-11 10:07:42.121 +04 [64356] STATEMENT:  SELECT id FROM users WHERE login = $1 AND password = $2
+2024-12-11 10:07:44.584 +04 [64356] ERROR:  permission denied for table users
+2024-12-11 10:07:44.584 +04 [64356] STATEMENT:  SELECT id FROM users WHERE login = $1 AND password = $2
+2024-12-11 10:09:32.219 +04 [64866] ERROR:  permission denied for table users
+2024-12-11 10:09:32.219 +04 [64866] STATEMENT:  SELECT id FROM users WHERE login = $1 AND password = $2
+2024-12-11 10:09:38.997 +04 [64866] ERROR:  permission denied for table users
+2024-12-11 10:09:38.997 +04 [64866] STATEMENT:  SELECT id FROM users WHERE login = $1 AND password = $2
+2024-12-11 10:10:38.598 +04 [65336] ERROR:  permission denied for table users
+2024-12-11 10:10:38.598 +04 [65336] STATEMENT:  SELECT id FROM users WHERE login = $1 AND password = $2
+2024-12-11 10:10:40.456 +04 [65336] ERROR:  permission denied for table users
+2024-12-11 10:10:40.456 +04 [65336] STATEMENT:  SELECT id FROM users WHERE login = $1 AND password = $2
+2024-12-11 10:11:18.495 +04 [65628] ERROR:  permission denied for table users
+2024-12-11 10:11:18.495 +04 [65628] STATEMENT:  SELECT id FROM users WHERE login = $1 AND password = $2
+2024-12-11 10:11:21.030 +04 [65628] ERROR:  permission denied for table users
+2024-12-11 10:11:21.030 +04 [65628] STATEMENT:  SELECT id FROM users WHERE login = $1 AND password = $2
+2024-12-11 10:13:28.290 +04 [65628] ERROR:  permission denied for table users
+2024-12-11 10:13:28.290 +04 [65628] STATEMENT:  SELECT id FROM users WHERE login = $1 AND password = $2
+2024-12-11 10:15:09.563 +04 [51185] LOG:  checkpoint starting: time
+2024-12-11 10:15:10.285 +04 [51185] LOG:  checkpoint complete: wrote 7 buffers (0.0%), wrote 1 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=0.706 s, sync=0.008 s, total=0.723 s; sync files=5, longest=0.007 s, average=0.002 s; distance=8 kB, estimate=4118 kB; lsn=0/2040B78, redo lsn=0/2040B20
+2024-12-11 10:15:35.918 +04 [65923] ERROR:  syntax error at or near "database" at character 49
+2024-12-11 10:15:35.918 +04 [65923] STATEMENT:  ALTER DEFAULT PRIVILEGES FOR ROLE admin_user IN database usersdb GRANT SELECT, UPDATE, INSERT, DELETE ON TABLES TO dbuser;
+2024-12-11 10:16:21.429 +04 [65923] ERROR:  role "dbusers" does not exist
+2024-12-11 10:16:21.429 +04 [65923] STATEMENT:  ALTER DEFAULT PRIVILEGES FOR ROLE admin_user IN SCHEMA public GRANT SELECT, UPDATE, INSERT, DELETE ON TABLES TO dbusers;
+2024-12-11 10:16:24.175 +04 [65923] ERROR:  role "admin_user" does not exist
+2024-12-11 10:16:24.175 +04 [65923] STATEMENT:  ALTER DEFAULT PRIVILEGES FOR ROLE admin_user IN SCHEMA public GRANT SELECT, UPDATE, INSERT, DELETE ON TABLES TO dbuser;
+2024-12-11 10:16:41.802 +04 [65628] ERROR:  permission denied for table users
+2024-12-11 10:16:41.802 +04 [65628] STATEMENT:  SELECT id FROM users WHERE login = $1 AND password = $2
+2024-12-11 10:18:33.095 +04 [65628] ERROR:  permission denied for table users
+2024-12-11 10:18:33.095 +04 [65628] STATEMENT:  SELECT id FROM users WHERE login = $1 AND password = $2
+2024-12-11 10:20:09.386 +04 [51185] LOG:  checkpoint starting: time
+2024-12-11 10:20:10.513 +04 [51185] LOG:  checkpoint complete: wrote 11 buffers (0.1%), wrote 1 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=1.108 s, sync=0.008 s, total=1.128 s; sync files=10, longest=0.007 s, average=0.001 s; distance=17 kB, estimate=3708 kB; lsn=0/2045348, redo lsn=0/20452F0
+2024-12-11 10:20:23.549 +04 [65628] ERROR:  permission denied for table users
+2024-12-11 10:20:23.549 +04 [65628] STATEMENT:  INSERT INTO users (login, password, permissions) VALUES ($1, $2, $3) RETURNING id
+2024-12-11 10:20:34.729 +04 [66657] ERROR:  permission denied for table users
+2024-12-11 10:20:34.729 +04 [66657] STATEMENT:  INSERT INTO users (login, password, permissions) VALUES ($1, $2, $3) RETURNING id
+2024-12-11 10:21:23.317 +04 [66954] ERROR:  permission denied for table users
+2024-12-11 10:21:23.317 +04 [66954] STATEMENT:  INSERT INTO users (login, password, permissions) VALUES ($1, $2, $3) RETURNING id
+2024-12-11 10:22:58.640 +04 [67301] ERROR:  column "access_token" does not exist at character 52
+2024-12-11 10:22:58.640 +04 [67301] HINT:  Perhaps you meant to reference the column "tokens.acess_token".
+2024-12-11 10:22:58.640 +04 [67301] STATEMENT:  SELECT refresh_token, expiration FROM tokens WHERE access_token = $1
+2024-12-11 10:22:58.641 +04 [67301] ERROR:  column "access_token" does not exist at character 52
+2024-12-11 10:22:58.641 +04 [67301] HINT:  Perhaps you meant to reference the column "tokens.acess_token".
+2024-12-11 10:22:58.641 +04 [67301] STATEMENT:  SELECT refresh_token, expiration FROM tokens WHERE access_token = $1
+2024-12-11 10:22:58.641 +04 [67301] ERROR:  column "access_token" does not exist at character 52
+2024-12-11 10:22:58.641 +04 [67301] HINT:  Perhaps you meant to reference the column "tokens.acess_token".
+2024-12-11 10:22:58.641 +04 [67301] STATEMENT:  SELECT refresh_token, expiration FROM tokens WHERE access_token = $1
+2024-12-11 10:22:58.641 +04 [67301] ERROR:  column "access_token" does not exist at character 52
+2024-12-11 10:22:58.641 +04 [67301] HINT:  Perhaps you meant to reference the column "tokens.acess_token".
+2024-12-11 10:22:58.641 +04 [67301] STATEMENT:  SELECT refresh_token, expiration FROM tokens WHERE access_token = $1
+2024-12-11 10:22:58.641 +04 [67301] ERROR:  column "access_token" does not exist at character 52
+2024-12-11 10:22:58.641 +04 [67301] HINT:  Perhaps you meant to reference the column "tokens.acess_token".
+2024-12-11 10:22:58.641 +04 [67301] STATEMENT:  SELECT refresh_token, expiration FROM tokens WHERE access_token = $1
+2024-12-11 10:23:01.863 +04 [67301] ERROR:  column "access_token" does not exist at character 52
+2024-12-11 10:23:01.863 +04 [67301] HINT:  Perhaps you meant to reference the column "tokens.acess_token".
+2024-12-11 10:23:01.863 +04 [67301] STATEMENT:  SELECT refresh_token, expiration FROM tokens WHERE access_token = $1
+2024-12-11 10:23:01.864 +04 [67301] ERROR:  column "access_token" does not exist at character 52
+2024-12-11 10:23:01.864 +04 [67301] HINT:  Perhaps you meant to reference the column "tokens.acess_token".
+2024-12-11 10:23:01.864 +04 [67301] STATEMENT:  SELECT refresh_token, expiration FROM tokens WHERE access_token = $1
+2024-12-11 10:23:01.864 +04 [67301] ERROR:  column "access_token" does not exist at character 52
+2024-12-11 10:23:01.864 +04 [67301] HINT:  Perhaps you meant to reference the column "tokens.acess_token".
+2024-12-11 10:23:01.864 +04 [67301] STATEMENT:  SELECT refresh_token, expiration FROM tokens WHERE access_token = $1
+2024-12-11 10:23:01.864 +04 [67301] ERROR:  column "access_token" does not exist at character 52
+2024-12-11 10:23:01.864 +04 [67301] HINT:  Perhaps you meant to reference the column "tokens.acess_token".
+2024-12-11 10:23:01.864 +04 [67301] STATEMENT:  SELECT refresh_token, expiration FROM tokens WHERE access_token = $1
+2024-12-11 10:23:01.864 +04 [67301] ERROR:  column "access_token" does not exist at character 52
+2024-12-11 10:23:01.864 +04 [67301] HINT:  Perhaps you meant to reference the column "tokens.acess_token".
+2024-12-11 10:23:01.864 +04 [67301] STATEMENT:  SELECT refresh_token, expiration FROM tokens WHERE access_token = $1
+2024-12-11 10:24:30.876 +04 [67469] ERROR:  invalid byte sequence for encoding "UTF8": 0xd5 0x69
+2024-12-11 10:24:30.876 +04 [67469] CONTEXT:  unnamed portal parameter $1
+2024-12-11 10:24:30.876 +04 [67469] STATEMENT:  SELECT refresh_token, expiration FROM tokens WHERE access_token = $1
+2024-12-11 10:24:30.877 +04 [67469] ERROR:  invalid byte sequence for encoding "UTF8": 0xb5
+2024-12-11 10:24:30.877 +04 [67469] CONTEXT:  unnamed portal parameter $1
+2024-12-11 10:24:30.877 +04 [67469] STATEMENT:  SELECT refresh_token, expiration FROM tokens WHERE access_token = $1
+2024-12-11 10:24:30.877 +04 [67469] ERROR:  invalid byte sequence for encoding "UTF8": 0xaf
+2024-12-11 10:24:30.877 +04 [67469] CONTEXT:  unnamed portal parameter $1
+2024-12-11 10:24:30.877 +04 [67469] STATEMENT:  SELECT refresh_token, expiration FROM tokens WHERE access_token = $1
+2024-12-11 10:24:30.877 +04 [67469] ERROR:  invalid byte sequence for encoding "UTF8": 0xcf 0x66
+2024-12-11 10:24:30.877 +04 [67469] CONTEXT:  unnamed portal parameter $1
+2024-12-11 10:24:30.877 +04 [67469] STATEMENT:  SELECT refresh_token, expiration FROM tokens WHERE access_token = $1
+2024-12-11 10:24:30.877 +04 [67469] ERROR:  invalid byte sequence for encoding "UTF8": 0xed 0xec 0x8c
+2024-12-11 10:24:30.877 +04 [67469] CONTEXT:  unnamed portal parameter $1
+2024-12-11 10:24:30.877 +04 [67469] STATEMENT:  SELECT refresh_token, expiration FROM tokens WHERE access_token = $1
+2024-12-11 10:24:38.267 +04 [67469] ERROR:  invalid byte sequence for encoding "UTF8": 0xff
+2024-12-11 10:24:38.267 +04 [67469] CONTEXT:  unnamed portal parameter $1
+2024-12-11 10:24:38.267 +04 [67469] STATEMENT:  SELECT refresh_token, expiration FROM tokens WHERE access_token = $1
+2024-12-11 10:24:38.267 +04 [67469] ERROR:  invalid byte sequence for encoding "UTF8": 0xeb 0xaa 0x7a
+2024-12-11 10:24:38.267 +04 [67469] CONTEXT:  unnamed portal parameter $1
+2024-12-11 10:24:38.267 +04 [67469] STATEMENT:  SELECT refresh_token, expiration FROM tokens WHERE access_token = $1
+2024-12-11 10:24:38.267 +04 [67469] ERROR:  invalid byte sequence for encoding "UTF8": 0x9e
+2024-12-11 10:24:38.267 +04 [67469] CONTEXT:  unnamed portal parameter $1
+2024-12-11 10:24:38.267 +04 [67469] STATEMENT:  SELECT refresh_token, expiration FROM tokens WHERE access_token = $1
+2024-12-11 10:24:38.267 +04 [67469] ERROR:  invalid byte sequence for encoding "UTF8": 0xe3 0x24 0xfb
+2024-12-11 10:24:38.267 +04 [67469] CONTEXT:  unnamed portal parameter $1
+2024-12-11 10:24:38.267 +04 [67469] STATEMENT:  SELECT refresh_token, expiration FROM tokens WHERE access_token = $1
+2024-12-11 10:24:38.267 +04 [67469] ERROR:  invalid byte sequence for encoding "UTF8": 0xd5 0xc3
+2024-12-11 10:24:38.267 +04 [67469] CONTEXT:  unnamed portal parameter $1
+2024-12-11 10:24:38.267 +04 [67469] STATEMENT:  SELECT refresh_token, expiration FROM tokens WHERE access_token = $1
+2024-12-11 10:25:09.613 +04 [51185] LOG:  checkpoint starting: time
+2024-12-11 10:25:11.947 +04 [51185] LOG:  checkpoint complete: wrote 23 buffers (0.1%), wrote 1 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=2.314 s, sync=0.009 s, total=2.334 s; sync files=20, longest=0.006 s, average=0.001 s; distance=100 kB, estimate=3347 kB; lsn=0/205E478, redo lsn=0/205E420
+2024-12-11 21:34:28.623 +04 [51185] LOG:  checkpoint starting: time
+2024-12-11 21:34:28.940 +04 [51185] LOG:  checkpoint complete: wrote 3 buffers (0.0%), wrote 1 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=0.304 s, sync=0.008 s, total=0.318 s; sync files=4, longest=0.007 s, average=0.002 s; distance=0 kB, estimate=3012 kB; lsn=0/205E800, redo lsn=0/205E7A8
+2024-12-11 21:39:49.150 +04 [72423] ERROR:  invalid byte sequence for encoding "UTF8": 0xd4 0xc8
+2024-12-11 21:39:49.150 +04 [72423] CONTEXT:  unnamed portal parameter $1
+2024-12-11 21:39:49.150 +04 [72423] STATEMENT:  SELECT refresh_token, expiration FROM tokens WHERE access_token = $1
+2024-12-11 21:39:49.150 +04 [72423] ERROR:  invalid byte sequence for encoding "UTF8": 0xed 0xe4 0xed
+2024-12-11 21:39:49.150 +04 [72423] CONTEXT:  unnamed portal parameter $1
+2024-12-11 21:39:49.150 +04 [72423] STATEMENT:  SELECT refresh_token, expiration FROM tokens WHERE access_token = $1
+2024-12-11 21:39:49.151 +04 [72423] ERROR:  invalid byte sequence for encoding "UTF8": 0xf5 0x6f 0xe2 0x40
+2024-12-11 21:39:49.151 +04 [72423] CONTEXT:  unnamed portal parameter $1
+2024-12-11 21:39:49.151 +04 [72423] STATEMENT:  SELECT refresh_token, expiration FROM tokens WHERE access_token = $1
+2024-12-11 21:39:49.151 +04 [72423] ERROR:  invalid byte sequence for encoding "UTF8": 0xa0
+2024-12-11 21:39:49.151 +04 [72423] CONTEXT:  unnamed portal parameter $1
+2024-12-11 21:39:49.151 +04 [72423] STATEMENT:  SELECT refresh_token, expiration FROM tokens WHERE access_token = $1
+2024-12-11 21:39:49.151 +04 [72423] ERROR:  invalid byte sequence for encoding "UTF8": 0xa0
+2024-12-11 21:39:49.151 +04 [72423] CONTEXT:  unnamed portal parameter $1
+2024-12-11 21:39:49.151 +04 [72423] STATEMENT:  SELECT refresh_token, expiration FROM tokens WHERE access_token = $1
+2024-12-11 21:43:02.033 +04 [73951] ERROR:  invalid byte sequence for encoding "UTF8": 0xdc 0xd8
+2024-12-11 21:43:02.033 +04 [73951] CONTEXT:  unnamed portal parameter $1
+2024-12-11 21:43:02.033 +04 [73951] STATEMENT:  SELECT refresh_token, expiration FROM tokens WHERE access_token = $1
+2024-12-11 21:43:02.034 +04 [73951] ERROR:  invalid byte sequence for encoding "UTF8": 0xe1 0xb5 0x46
+2024-12-11 21:43:02.034 +04 [73951] CONTEXT:  unnamed portal parameter $1
+2024-12-11 21:43:02.034 +04 [73951] STATEMENT:  SELECT refresh_token, expiration FROM tokens WHERE access_token = $1
+2024-12-11 21:43:02.034 +04 [73951] ERROR:  invalid byte sequence for encoding "UTF8": 0xfe
+2024-12-11 21:43:02.034 +04 [73951] CONTEXT:  unnamed portal parameter $1
+2024-12-11 21:43:02.034 +04 [73951] STATEMENT:  SELECT refresh_token, expiration FROM tokens WHERE access_token = $1
+2024-12-11 21:43:02.034 +04 [73951] ERROR:  invalid byte sequence for encoding "UTF8": 0x91
+2024-12-11 21:43:02.034 +04 [73951] CONTEXT:  unnamed portal parameter $1
+2024-12-11 21:43:02.034 +04 [73951] STATEMENT:  SELECT refresh_token, expiration FROM tokens WHERE access_token = $1
+2024-12-11 21:43:02.034 +04 [73951] ERROR:  invalid byte sequence for encoding "UTF8": 0x90
+2024-12-11 21:43:02.034 +04 [73951] CONTEXT:  unnamed portal parameter $1
+2024-12-11 21:43:02.034 +04 [73951] STATEMENT:  SELECT refresh_token, expiration FROM tokens WHERE access_token = $1
+2024-12-11 21:46:09.358 +04 [74970] ERROR:  invalid byte sequence for encoding "UTF8": 0xff
+2024-12-11 21:46:09.358 +04 [74970] CONTEXT:  unnamed portal parameter $1
+2024-12-11 21:46:09.358 +04 [74970] STATEMENT:  SELECT refresh_token, expiration FROM tokens WHERE access_token = $1
+2024-12-11 21:46:09.358 +04 [74970] ERROR:  invalid byte sequence for encoding "UTF8": 0xd3 0x20
+2024-12-11 21:46:09.358 +04 [74970] CONTEXT:  unnamed portal parameter $1
+2024-12-11 21:46:09.358 +04 [74970] STATEMENT:  SELECT refresh_token, expiration FROM tokens WHERE access_token = $1
+2024-12-11 21:46:09.358 +04 [74970] ERROR:  invalid byte sequence for encoding "UTF8": 0x81
+2024-12-11 21:46:09.358 +04 [74970] CONTEXT:  unnamed portal parameter $1
+2024-12-11 21:46:09.358 +04 [74970] STATEMENT:  SELECT refresh_token, expiration FROM tokens WHERE access_token = $1
+2024-12-11 21:46:09.358 +04 [74970] ERROR:  invalid byte sequence for encoding "UTF8": 0xb4
+2024-12-11 21:46:09.358 +04 [74970] CONTEXT:  unnamed portal parameter $1
+2024-12-11 21:46:09.358 +04 [74970] STATEMENT:  SELECT refresh_token, expiration FROM tokens WHERE access_token = $1
+2024-12-11 21:46:09.359 +04 [74970] ERROR:  invalid byte sequence for encoding "UTF8": 0x83
+2024-12-11 21:46:09.359 +04 [74970] CONTEXT:  unnamed portal parameter $1
+2024-12-11 21:46:09.359 +04 [74970] STATEMENT:  SELECT refresh_token, expiration FROM tokens WHERE access_token = $1
+2024-12-11 21:56:50.230 +04 [76877] ERROR:  invalid byte sequence for encoding "UTF8": 0x90
+2024-12-11 21:56:50.230 +04 [76877] CONTEXT:  unnamed portal parameter $1
+2024-12-11 21:56:50.230 +04 [76877] STATEMENT:  SELECT refresh_token, expiration FROM tokens WHERE access_token = $1
+2024-12-11 21:56:50.231 +04 [76877] ERROR:  invalid byte sequence for encoding "UTF8": 0xf4 0x84 0xd7 0xcc
+2024-12-11 21:56:50.231 +04 [76877] CONTEXT:  unnamed portal parameter $1
+2024-12-11 21:56:50.231 +04 [76877] STATEMENT:  SELECT refresh_token, expiration FROM tokens WHERE access_token = $1
+2024-12-11 21:56:50.231 +04 [76877] ERROR:  invalid byte sequence for encoding "UTF8": 0xcf 0x3b
+2024-12-11 21:56:50.231 +04 [76877] CONTEXT:  unnamed portal parameter $1
+2024-12-11 21:56:50.231 +04 [76877] STATEMENT:  SELECT refresh_token, expiration FROM tokens WHERE access_token = $1
+2024-12-11 21:56:50.231 +04 [76877] ERROR:  invalid byte sequence for encoding "UTF8": 0xfa
+2024-12-11 21:56:50.231 +04 [76877] CONTEXT:  unnamed portal parameter $1
+2024-12-11 21:56:50.231 +04 [76877] STATEMENT:  SELECT refresh_token, expiration FROM tokens WHERE access_token = $1
+2024-12-11 21:56:50.231 +04 [76877] ERROR:  invalid byte sequence for encoding "UTF8": 0xa2
+2024-12-11 21:56:50.231 +04 [76877] CONTEXT:  unnamed portal parameter $1
+2024-12-11 21:56:50.231 +04 [76877] STATEMENT:  SELECT refresh_token, expiration FROM tokens WHERE access_token = $1
+2024-12-11 21:59:29.391 +04 [51185] LOG:  checkpoint starting: time
+2024-12-11 21:59:32.224 +04 [51185] LOG:  checkpoint complete: wrote 28 buffers (0.2%), wrote 1 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=2.814 s, sync=0.008 s, total=2.834 s; sync files=23, longest=0.007 s, average=0.001 s; distance=152 kB, estimate=2726 kB; lsn=0/2084B98, redo lsn=0/2084B40
+2024-12-11 22:10:35.974 +04 [78312] ERROR:  invalid byte sequence for encoding "UTF8": 0xf0 0x3f 0x24 0x0c
+2024-12-11 22:10:35.974 +04 [78312] CONTEXT:  unnamed portal parameter $1
+2024-12-11 22:10:35.974 +04 [78312] STATEMENT:  SELECT refresh_token, expiration FROM tokens WHERE access_token = $1
+2024-12-11 22:10:35.975 +04 [78312] ERROR:  invalid byte sequence for encoding "UTF8": 0xdc 0x21
+2024-12-11 22:10:35.975 +04 [78312] CONTEXT:  unnamed portal parameter $1
+2024-12-11 22:10:35.975 +04 [78312] STATEMENT:  SELECT refresh_token, expiration FROM tokens WHERE access_token = $1
+2024-12-11 22:10:35.975 +04 [78312] ERROR:  invalid byte sequence for encoding "UTF8": 0x99
+2024-12-11 22:10:35.975 +04 [78312] CONTEXT:  unnamed portal parameter $1
+2024-12-11 22:10:35.975 +04 [78312] STATEMENT:  SELECT refresh_token, expiration FROM tokens WHERE access_token = $1
+2024-12-11 22:10:35.976 +04 [78312] ERROR:  invalid byte sequence for encoding "UTF8": 0xed 0xa3 0xdd
+2024-12-11 22:10:35.976 +04 [78312] CONTEXT:  unnamed portal parameter $1
+2024-12-11 22:10:35.976 +04 [78312] STATEMENT:  SELECT refresh_token, expiration FROM tokens WHERE access_token = $1
+2024-12-11 22:10:35.976 +04 [78312] ERROR:  invalid byte sequence for encoding "UTF8": 0xca 0x10
+2024-12-11 22:10:35.976 +04 [78312] CONTEXT:  unnamed portal parameter $1
+2024-12-11 22:10:35.976 +04 [78312] STATEMENT:  SELECT refresh_token, expiration FROM tokens WHERE access_token = $1
+2024-12-11 22:11:52.917 +04 [78590] ERROR:  invalid byte sequence for encoding "UTF8": 0xeb 0x55 0xc7
+2024-12-11 22:11:52.917 +04 [78590] CONTEXT:  unnamed portal parameter $1
+2024-12-11 22:11:52.917 +04 [78590] STATEMENT:  SELECT refresh_token, expiration FROM tokens WHERE access_token = $1
+2024-12-11 22:11:52.918 +04 [78590] ERROR:  invalid byte sequence for encoding "UTF8": 0x80
+2024-12-11 22:11:52.918 +04 [78590] CONTEXT:  unnamed portal parameter $1
+2024-12-11 22:11:52.918 +04 [78590] STATEMENT:  SELECT refresh_token, expiration FROM tokens WHERE access_token = $1
+2024-12-11 22:11:52.918 +04 [78590] ERROR:  invalid byte sequence for encoding "UTF8": 0xd7 0xf1
+2024-12-11 22:11:52.918 +04 [78590] CONTEXT:  unnamed portal parameter $1
+2024-12-11 22:11:52.918 +04 [78590] STATEMENT:  SELECT refresh_token, expiration FROM tokens WHERE access_token = $1
+2024-12-11 22:11:52.918 +04 [78590] ERROR:  invalid byte sequence for encoding "UTF8": 0xc4 0x02
+2024-12-11 22:11:52.918 +04 [78590] CONTEXT:  unnamed portal parameter $1
+2024-12-11 22:11:52.918 +04 [78590] STATEMENT:  SELECT refresh_token, expiration FROM tokens WHERE access_token = $1
+2024-12-11 22:11:52.919 +04 [78590] ERROR:  invalid byte sequence for encoding "UTF8": 0xa3
+2024-12-11 22:11:52.919 +04 [78590] CONTEXT:  unnamed portal parameter $1
+2024-12-11 22:11:52.919 +04 [78590] STATEMENT:  SELECT refresh_token, expiration FROM tokens WHERE access_token = $1
+2024-12-11 22:12:09.343 +04 [78701] ERROR:  invalid byte sequence for encoding "UTF8": 0xdc 0xd1
+2024-12-11 22:12:09.343 +04 [78701] CONTEXT:  unnamed portal parameter $1
+2024-12-11 22:12:09.343 +04 [78701] STATEMENT:  SELECT refresh_token, expiration FROM tokens WHERE access_token = $1
+2024-12-11 22:12:09.343 +04 [78701] ERROR:  invalid byte sequence for encoding "UTF8": 0x94
+2024-12-11 22:12:09.343 +04 [78701] CONTEXT:  unnamed portal parameter $1
+2024-12-11 22:12:09.343 +04 [78701] STATEMENT:  SELECT refresh_token, expiration FROM tokens WHERE access_token = $1
+2024-12-11 22:12:09.343 +04 [78701] ERROR:  invalid byte sequence for encoding "UTF8": 0xa6
+2024-12-11 22:12:09.343 +04 [78701] CONTEXT:  unnamed portal parameter $1
+2024-12-11 22:12:09.343 +04 [78701] STATEMENT:  SELECT refresh_token, expiration FROM tokens WHERE access_token = $1
+2024-12-11 22:12:09.344 +04 [78701] ERROR:  invalid byte sequence for encoding "UTF8": 0x91
+2024-12-11 22:12:09.344 +04 [78701] CONTEXT:  unnamed portal parameter $1
+2024-12-11 22:12:09.344 +04 [78701] STATEMENT:  SELECT refresh_token, expiration FROM tokens WHERE access_token = $1
+2024-12-11 22:12:09.344 +04 [78701] ERROR:  invalid byte sequence for encoding "UTF8": 0x85
+2024-12-11 22:12:09.344 +04 [78701] CONTEXT:  unnamed portal parameter $1
+2024-12-11 22:12:09.344 +04 [78701] STATEMENT:  SELECT refresh_token, expiration FROM tokens WHERE access_token = $1
+2024-12-11 22:20:25.458 +04 [79877] ERROR:  column "user_id" of relation "tokens" does not exist at character 62
+2024-12-11 22:20:25.458 +04 [79877] STATEMENT:  INSERT INTO tokens (access_token, refresh_token, expiration, user_id) VALUES ($1, $2, $3, $4)
+2024-12-11 22:21:16.130 +04 [79877] ERROR:  column "user_id" of relation "tokens" does not exist at character 62
+2024-12-11 22:21:16.130 +04 [79877] STATEMENT:  INSERT INTO tokens (access_token, refresh_token, expiration, user_id) VALUES ($1, $2, $3, $4)
+2024-12-11 22:22:14.318 +04 [80528] ERROR:  column "user_id" of relation "tokens" does not exist at character 62
+2024-12-11 22:22:14.318 +04 [80528] STATEMENT:  INSERT INTO tokens (access_token, refresh_token, expiration, user_id) VALUES ($1, $2, $3, $4)
+2024-12-11 22:25:06.454 +04 [81236] ERROR:  column "user_id" of relation "tokens" does not exist at character 62
+2024-12-11 22:25:06.454 +04 [81236] STATEMENT:  INSERT INTO tokens (access_token, refresh_token, expiration, user_id) VALUES ($1, $2, $3, $4)
+2024-12-11 22:25:36.564 +04 [81559] ERROR:  column "user_id" of relation "tokens" does not exist at character 62
+2024-12-11 22:25:36.564 +04 [81559] STATEMENT:  INSERT INTO tokens (access_token, refresh_token, expiration, user_id) VALUES ($1, $2, $3, $4)
+2024-12-11 22:29:29.723 +04 [51185] LOG:  checkpoint starting: time
+2024-12-11 22:29:31.957 +04 [51185] LOG:  checkpoint complete: wrote 22 buffers (0.1%), wrote 1 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=2.213 s, sync=0.009 s, total=2.235 s; sync files=20, longest=0.006 s, average=0.001 s; distance=123 kB, estimate=2466 kB; lsn=0/20A37B0, redo lsn=0/20A3758

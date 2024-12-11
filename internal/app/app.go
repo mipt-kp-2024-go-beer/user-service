@@ -10,7 +10,7 @@ import (
 	"os/signal"
 
 	users "github.com/mipt-kp-2024-go-beer/user-service/internal"
-	"github.com/mipt-kp-2024-go-beer/user-service/internal/storage/memory"
+	database "github.com/mipt-kp-2024-go-beer/user-service/internal/storage/postgresql"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -21,6 +21,14 @@ type App struct {
 	public  *http.Server
 	private *http.Server
 }
+
+const (
+	host     = "localhost"
+	port     = 5432
+	user     = "postgres"
+	password = "12345678"
+	dbname   = "usersdb"
+)
 
 func New(ctx context.Context, config *Config) (*App, error) {
 	open := http.NewServeMux()
@@ -42,7 +50,14 @@ func (a *App) Setup(ctx context.Context, dsn string) error {
 
 	//store := fridgeStore.NewStorage(db)
 	// store := sqlite.NewStorage(db)
-	store := memory.NewStorage()
+	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
+		"password=%s dbname=%s sslmode=disable",
+		host, port, user, password, dbname)
+	store, err := database.NewStorage(psqlInfo)
+
+	if err != nil {
+		return err
+	}
 
 	service := users.NewAppService(store)
 	handler := users.NewHandler(service, a.open, a.secret)
